@@ -34,14 +34,19 @@ class Resource:
             self.__data = self._retrieve()
         return self.__data
 
-    @property.setter
+    @_resource.setter
     def _resource(self, value):
         """Set the resource"""
         self.__data = value
+
+    @property
+    def exception(self):
+        """Error information about failure to generate the resource"""
+        return self._exception
         
-    @property.setter
+    @exception.setter
     def exception(self, exception):
-        """Attach error information about failure to generate the resource"""
+        """Attach error information"""
         self._exception = exception
     
     def _retrieve(self):
@@ -61,7 +66,7 @@ class Resource:
         pass
 
 #------------------------------------------------------------------------------
-# Example subclasses (will be used in the example at the bottom)
+# Example subclasses
 #------------------------------------------------------------------------------
 class FileResource(Resource):
     """A resource that is a Python file object."""

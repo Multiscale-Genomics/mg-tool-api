@@ -18,6 +18,11 @@ from mug import conversion as mug_conversion
 from .tool import Tool
 from .resource import Resource
 
+from pycompss.api.task import task
+from pycompss.api.constraint import constraint
+from pycompss.api.parameter import IN, OUT
+
+
 #------------------------------------------------------------------------------
 # Example tools
 #------------------------------------------------------------------------------
@@ -35,7 +40,7 @@ class ProteinAbInitioStructurePrediction(Tool):
     configuration = dict(output_format="PDB")
 
     @task(protein_sequence = IN, output_resource = OUT)
-    @constraints(AppSoftware="numpy,scipy")
+    @constraint(AppSoftware="numpy,scipy")
     def run(self, protein_sequence):
         
         # 0. Import the dummy structure prediction library
@@ -86,7 +91,7 @@ class DNAAbInitioStructurePrediction(Tool):
     configuration = {}
 
     @task(dna_sequence = IN, output_resource = OUT)
-    @constraints(ProcessorArch="x86_64", OperatingSystemType="Linux")
+    @constraint(ProcessorArch="x86_64", OperatingSystemType="Linux")
     def run(self, dna_sequence):
 
         # 0. Import the mug_conversion library, which provides
@@ -99,7 +104,7 @@ class DNAAbInitioStructurePrediction(Tool):
             
             # 2. No conversion required
             # 3. Perform action (rate-limiting step)
-            with file("out.log",'w') as stdout,
+            with file("out.log",'w') as stdout, \
                 file("err.log",'w') as stderr:
                 predict  = subprocess.Popen(['dna_predict_structure',
                                             '--infile=tempfile.fasta',
@@ -149,7 +154,7 @@ class RigidBodyDocking(Tool):
         'optimise_sidechains':False}
 
     @task(model1 = IN, model2 = IN, output_resource = OUT)
-    @constraints()
+    @constraint()
     def run(self, model1, model2):
 
         # 0. Import the "requests" library to simplify REST API calls;
@@ -212,7 +217,7 @@ class DockingWorkflow(Tool):
     # each step.
     
     @task(protein_sequence = IN, dna_sequence = IN, output_resource = OUT)
-    @constraints()
+    @constraint()
     def run(self, protein_sequence, dna_sequence):
         protein_structure = ProteinAbInitioStructurePrediction().run(
             protein_sequence)

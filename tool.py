@@ -1,6 +1,10 @@
 from mug import datatypes as mug_datatypes
 from .resource import Resource
 
+from pycompss.api.task import task
+from pycompss.api.constraint import constraint
+from pycompss.api.parameter import IN, OUT
+
 #------------------------------------------------------------------------------
 # Main Tool interface
 #------------------------------------------------------------------------------
@@ -23,7 +27,7 @@ class Tool:
         self.configuration.update(configuration)
 
     @task(input_resource = IN, output_resource = OUT)
-    @constraints()
+    @constraint()
     def run(self, input_resource):
         """
         Perform the required operations to achieve the functionality of the
