@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------------
 # Main Resource interface
 #------------------------------------------------------------------------------
-class Resource:
+class Resource(object):
     """
     Abstract class defining a generic resource.
     It must specify the data type, as defined in the DMP, which is defined at

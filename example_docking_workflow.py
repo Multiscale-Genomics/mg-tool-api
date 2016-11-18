@@ -39,23 +39,23 @@ class ProteinAbInitioStructurePrediction(Tool):
     output_data_type = mug_datatypes.PDBStructure
     configuration = dict(output_format="PDB")
 
-    @task(protein_sequence = IN, output_resource = OUT)
     @constraint(AppSoftware="numpy,scipy")
+    @task(protein_sequence = IN, returns = object)
     def run(self, protein_sequence):
-        
+
         # 0. Import the dummy structure prediction library
         import protein_abinit
-        
+
         try:
             # 1. Stage resource locally as a file
             protein_sequence.write("tempfile.fasta")
-            
+
             # 2. Convert from FASTA to just sequence (XXX: use mug_conversion)
             with file("tempfile2", 'w') as outfile:
                 grep = subprocess.Popen(['grep', '-v', "'>' tempfile.fasta"],
                                         stdout=outfile, shell=False)
                 grep.wait()
-            
+
             # 3. Perform action (rate-limiting step)
             with file("tempfile2") as infile, \
               file("prediction.pdb", 'w') as outfile:
@@ -66,15 +66,13 @@ class ProteinAbInitioStructurePrediction(Tool):
 
             # 4. In this case, no output conversion is needed
             # 5. Return output resource
-            output_resource = FileResource(output_data_type, "prediction.pdb")
-        
+            return FileResource(output_data_type, "prediction.pdb")
+
         except Exception as e:
             # 6. Handle failure here.
-            # If the tool fails, the output_resource carries error information
-            output_resource = Resource(mug_datatypes.Error)
-            output_resource.exception = e
-            
-        return output_resource
+            # If the tool fails, the output resource carries error information
+            return Resource(mug_datatypes.Error,
+                                exception = e)
 
 #------------------------------------------------------------------------------
 class DNAAbInitioStructurePrediction(Tool):
@@ -90,18 +88,18 @@ class DNAAbInitioStructurePrediction(Tool):
     output_data_type = mug_datatypes.PDBStructure
     configuration = {}
 
-    @task(dna_sequence = IN, output_resource = OUT)
     @constraint(ProcessorArch="x86_64", OperatingSystemType="Linux")
+    @task(dna_sequence = IN, returns = object)
     def run(self, dna_sequence):
 
         # 0. Import the mug_conversion library, which provides
         #    routines to perform common conversion tasks
         import mug_conversion
-        
+
         try:
             # 1. Stage resource locally as a file
             dna_sequence.write("tempfile.fasta")
-            
+
             # 2. No conversion required
             # 3. Perform action (rate-limiting step)
             with file("out.log",'w') as stdout, \
@@ -113,7 +111,7 @@ class DNAAbInitioStructurePrediction(Tool):
                                             stdout=stdout, stderr=stderr,
                                             shell=False)
                 predict.wait()
-                
+
             # 3b. Check output for errors
             #     assume the 'dna_predict_structure' writes an "ERROR" 
             #     message to stderr upon failure
@@ -121,21 +119,19 @@ class DNAAbInitioStructurePrediction(Tool):
                 for line in stderr:
                     if line.startswith("ERROR"):
                         raise RuntimeError(line.strip())
-            
+
             # 4. Conversion output from "mol" to "pdb"
             #    using a function from the "mug_conversion" library
             mug_conversion.mol_to_pdb("tempfile2.mol", "prediction.pdb")
-            
+
             # 5. Return output resource
-            output_resource = FileResource(output_data_type, "prediction.pdb")
-        
+            return FileResource(output_data_type, "prediction.pdb")
+
         except Exception as e:
             # 6. Handle various exceptions here.
-            # If the tool fails, the output_resource carries error information
-            output_resource = Resource(mug_datatypes.Error)
-            output_resource.exception = e
-            
-        return output_resource
+            # If the tool fails, the output resource carries error information
+            return Resource(mug_datatypes.Error,
+                                exception = e)
 
 #------------------------------------------------------------------------------
 class RigidBodyDocking(Tool):
@@ -153,19 +149,19 @@ class RigidBodyDocking(Tool):
         'optimise_backbone':False,
         'optimise_sidechains':False}
 
-    @task(model1 = IN, model2 = IN, output_resource = OUT)
-    @constraint()
+    @constraint(connectivity = True)
+    @task(model1 = IN, model2 = IN, returns = object)
     def run(self, model1, model2):
 
         # 0. Import the "requests" library to simplify REST API calls;
         #    ideally, the REST API should be wrapped in a Python client.
         import requests, json
-        
+
         try:
             # 1. Retrieve input resources as a file object
             file1 = model1.as_file()
             file2 = model2.as_file()
-            
+
             # 2. No conversion required
             # 3. Perform action (rate-limiting step)
             url   = "http://bestdockingever.com/submit"
@@ -174,39 +170,41 @@ class RigidBodyDocking(Tool):
             r = requests.post(url,
                               files=files,
                               data = json.dumps(self.configuration))
-                
+
             # 3b. Check output for errors
             if r.status_code != requests.codes.ok:
                 r.raise_for_status()
-            
+
             # 4. No conversion required on output
             # 5. Return output resource
             #    assume the REST API returns a valid PDB string.
-            output_resource = TextResource(output_data_type, r.text)
-        
+            return TextResource(output_data_type, r.text)
+
         except Exception as e:
             # 6. Handle various exceptions here.
-            # If the tool fails, the output_resource carries error information
-            output_resource = Resource(mug_datatypes.Error)
-            output_resource.exception = e
-            
-        return output_resource
+            # If the tool fails, the output resource carries error information
+            return Resource(mug_datatypes.Error, 
+                                exception = e)
 
 #------------------------------------------------------------------------------
 # Example workflow
 #
+# Workflows are tools that call the 'run()' method of other tools.
+#
 # Note that the workflow is implemented as a subclass of Tool, making it 
 # possible to further combine workflows to construct more complex operations.
+#
+# Note also that pyCOMPSs doesn't support nested decorators.
 #------------------------------------------------------------------------------
 class DockingWorkflow(Tool):
-    
+
     """
     An example workflow to predict the structure of a protein-DNA complex by
     docking the two partners' ab-initio predicted structures given their
     sequence. The workflow doesn't perform any action itself, but just
     combines the actions of several other tools.
     """
-    
+
     input_data_type = [mug_datatypes.Sequence, mug_datatypes.Sequence]
     output_data_type = mug_datatypes.PDBStructure
     configuration = {}
@@ -215,15 +213,12 @@ class DockingWorkflow(Tool):
     # example, entries could be prefixed (e.g. "output_format" may become
     # "docking_output_format"), and then automatically filtered to configure
     # each step.
-    
-    @task(protein_sequence = IN, dna_sequence = IN, output_resource = OUT)
-    @constraint()
+
     def run(self, protein_sequence, dna_sequence):
         protein_structure = ProteinAbInitioStructurePrediction().run(
             protein_sequence)
         dna_structure = DNAAbInitioStructurePrediction().run(
             dna_sequence)
-        output_resource = RigidBodyDocking().run(
+        return RigidBodyDocking().run(
             protein_structure,
             dna_structure)
-        return output_resource

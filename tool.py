@@ -8,7 +8,7 @@ from pycompss.api.parameter import IN, OUT
 #------------------------------------------------------------------------------
 # Main Tool interface
 #------------------------------------------------------------------------------
-class Tool:
+class Tool(object):
     """
     Abstract class describing a specific operation on a precise input data type
     to produce a precise output data type. The tool should support multiple
@@ -26,8 +26,8 @@ class Tool:
         """
         self.configuration.update(configuration)
 
-    @task(input_resource = IN, output_resource = OUT)
     @constraint()
+    @task(input_resource = IN, returns = object)
     def run(self, input_resource):
         """
         Perform the required operations to achieve the functionality of the
@@ -40,5 +40,4 @@ class Tool:
         5. Returning the output_resource
         6. Handling failure 
         """
-        output_resource = Resource(self.output_data_type)
-        return output_resource
+        return Resource(self.output_data_type)
