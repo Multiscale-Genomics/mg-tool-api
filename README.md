@@ -5,7 +5,7 @@ A first attempt at outlining the main structures related to the tools section of
 This is a first attempt at outlining the main structures related to the
 tools section of the VRE. It implements the specifications detailed in the
 current version (23/09/2016) of the Deliverable 6.1 document: "Design of
-computational architecture of software modules" (http://bit.ly/mugD6_1). It
+computational architecture of software modules" (http://bit.ly/MuGD6_1). It
 extends the above document with the aim to provide a simple programming
 paradigm to develop tools for the MuG VRE.
 
@@ -32,7 +32,7 @@ the COMPSs runtime as the workflow scheduler.
 
 ## Objective
 
-This example is intended as a first draft to fuel discussions among all
+This code is intended as a first draft to fuel discussions among all
 involved parties (in particular WP4, WP5 and WP6) about the precise details of
 the software architecture of the VRE, and as such won't run as valid Python
 code out of the box. Please note that the scientific relevance of this is
@@ -70,7 +70,8 @@ limited to providing an example of usage of the class structure proposed.
 
 ## Examples
 
-At the end of this file, simple example tools are implemented to:
+The "example_docking_workflow.py" contains a minimal implementation of a few 
+simple example tools in order to perform:
 
 a. Ab-initio predict the structure of a protein given its sequence;
 b. Ab-initio predict the structure of a DNA oligomer given its sequence;
