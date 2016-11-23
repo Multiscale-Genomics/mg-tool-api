@@ -40,7 +40,7 @@ class ProteinAbInitioStructurePrediction(Tool):
     configuration = dict(output_format="PDB")
 
     @constraint(AppSoftware="numpy,scipy")
-    @task(protein_sequence = IN, returns = object)
+    @task(protein_sequence = IN, returns = Resource, isModifier = False)
     def run(self, protein_sequence):
 
         # 0. Import the dummy structure prediction library
@@ -89,7 +89,7 @@ class DNAAbInitioStructurePrediction(Tool):
     configuration = {}
 
     @constraint(ProcessorArch="x86_64", OperatingSystemType="Linux")
-    @task(dna_sequence = IN, returns = object)
+    @task(dna_sequence = IN, returns = Resource, isModifier = False)
     def run(self, dna_sequence):
 
         # 0. Import the mug_conversion library, which provides
@@ -150,7 +150,7 @@ class RigidBodyDocking(Tool):
         'optimise_sidechains':False}
 
     @constraint(connectivity = True)
-    @task(model1 = IN, model2 = IN, returns = object)
+    @task(model1 = IN, model2 = IN, returns = Resource, isModifier = False)
     def run(self, model1, model2):
 
         # 0. Import the "requests" library to simplify REST API calls;

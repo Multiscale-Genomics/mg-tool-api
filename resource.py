@@ -17,10 +17,10 @@ class Resource(object):
     
     """
 
-    def __init__(self, data_type):
+    def __init__(self, data_type, exception = None):
         self._data_type = data_type
+        self._exception = exception
         self.__data = None
-        self._exception = None
     
     @property
     def data_type(self):
@@ -71,13 +71,13 @@ class Resource(object):
 class FileResource(Resource):
     """A resource that is a Python file object."""
 
-    def __init__(self, data_type, path, mode='r'):
+    def __init__(self, data_type, path, mode='r', **kwargs):
         """
         Initialise this resource specifying, as well as the data_type, the
         path of the underlying file. The file will be opened with the specified
         mode (default 'r').
         """
-        super(FileResource).__init__(data_type)
+        super(FileResource).__init__(data_type, **kwargs)
         self._file_path = path
         self._file_mode = mode
     
@@ -93,6 +93,7 @@ class FileResource(Resource):
     def as_file(self):
         return self
     
+
     def as_string(self):
         return self.read()
     
@@ -106,12 +107,12 @@ class FileResource(Resource):
 class TextResource(Resource):
     """A resource that is a plain-text string."""
 
-    def __init__(self, data_type, text):
+    def __init__(self, data_type, text, **kwargs):
         """
         Initialise this resource specifying, as well as the data_type, its full
         content as a string.
         """
-        super(TextResource).__init__(data_type)
+        super(TextResource).__init__(data_type, **kwargs)
         self._resource = text
     
     def write(self, name):
