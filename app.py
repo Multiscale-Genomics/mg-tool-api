@@ -38,7 +38,7 @@ class App(object):
     Subclasses of App should implement operations specific to the particular
     execution environment, such as staging/unstaging.
     """
-
+    @staticmethod
     def launch(tool_class, input_ids, configuration):
         """ 
         Run a Tool with the specified inputs and configuration.
@@ -64,6 +64,7 @@ class App(object):
         output_ids = self._unstage(output_files, output_metadata)
         return output_ids
 
+    @staticmethod
     def _stage(input_ids):
         """ 
         Retrieve and stage inputs, from a list of unique data IDs.
@@ -72,6 +73,7 @@ class App(object):
         """
         pass
 
+    @staticmethod
     def _unstage(output_files, output_metadata):
         """ 
         Unstage the tool's outputs, specified as a list of file names and a
@@ -107,6 +109,7 @@ class SimpleApp(App):
     			  generation of the file or describing the way it was processed
     """
 
+    @staticmethod
     def launch(tool_class, input_ids, configuration):
         """ 
         Same as in super, but add the "source_id" information to the
@@ -126,6 +129,7 @@ class SimpleApp(App):
         output_ids = self._unstage(output_files, output_metadata)
         return output_ids
 
+    @staticmethod
     def _stage(input_ids):
         """
         In this scenario, we just need to retrieve the "file_path"s from
@@ -144,6 +148,7 @@ class SimpleApp(App):
                 file_obj["meta_data"]))
         return file_names, metadata
 
+    @staticmethod
     def _unstage(output_files, output_metadata):
         """
         In this scenario, we just need to declare the output files to
