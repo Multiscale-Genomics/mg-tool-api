@@ -135,7 +135,7 @@ class SimpleApp(App):
         metadata = []
         for iid in input_ids:
             "Get the entry from the DMP database"
-            file_obj = da.get_file_by_id(iid)
+            file_obj = da.get_file_by_id('user1', iid)
             file_names.append(file_obj["file_path"])
             metadata.append(Metadata(
                 file_obj["data_type"],
