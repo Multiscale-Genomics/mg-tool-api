@@ -1,50 +1,18 @@
-if __name__ == "__main__":
+"""
+Copyright (C) 2016 Marco Pasi <mf.pasi@gmail.com> 
 
-    ## Mock the MuG library
-    class datatypes(object):
-        Sequence = 0
-        PDBStructure = 1
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+"""
 
-    class conversion(object):
-        def mol_to_pdb(molfile, pdbfile):
-            pass
+from app import App
+from metadata import Metadata
+from tool import Tool, Workflow
+import apps
+import examples
 
-    class mug(object):
-        datatypes = datatypes
-        conversion = conversion
-
-    import sys
-    sys.modules["mug"] = mug
-
-
-    ## Mock pycompss
-    class parameter(object):
-        IN=0
-        OUT=1
-        #...
-
-    class task(object):
-        @staticmethod
-        def task(**kwargs):
-            return lambda x:x
-
-    class constraint(object):
-        @staticmethod
-        def constraint(**kwargs):
-            return lambda x:x
-
-    import sys
-    sys.modules["pycompss"] = object()
-    sys.modules["pycompss.api"] = object()
-    sys.modules["pycompss.api.task"] = task
-    sys.modules["pycompss.api.constraint"] = constraint
-    sys.modules["pycompss.api.parameter"] = parameter
-
-    ## Import and execute workflow
-    sys.path.append("/Users/marco/sci/MuG/src/D6.1")
-    from MuGtoolAPI import tool, example_docking_workflow, resource
-
-    protein_sequence = resource.Resource(mug.datatypes.Sequence)
-    dna_sequence = resource.Resource(mug.datatypes.Sequence)
-    example_docking_workflow.DockingWorkflow().run(
-        protein_sequence, dna_sequence)
+__author__  = 'Marco Pasi, Javier Conejero'
+__version__ = 'v0.2'
+__license__ = 'GPL v2'
