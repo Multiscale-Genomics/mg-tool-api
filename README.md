@@ -39,14 +39,18 @@ the COMPSs runtime as the workflow scheduler.
 2. App:
 	Is the main entry point to the tools layer of the VRE; it deals with heterogeneity
 	in the way Tools are run, in terms of filesystem access, runtime environment,
-	error reporting, and more. Apps implement a "launch" method, which prepares 
-	and runs a single instance of Tool. The "apps" module provides some example
-	Apps for straightforward cases:
-		- *LocalApp*: uses the MuG DMP API to retrieve file names that are assumed
-		to be locally accessible;
-		- *PyCOMPSsApp*: specific for Tools using PyCOMPSs;
-		- *WorkflowApp*: inherits from both of the above, and implements the ability
-		to unstage intermediate outputs.
+	error reporting, and more. Therefore, Apps are compatible with all Tools.
+	Apps implement a "launch" method, which prepares and runs a single instance of Tool. 
+	The "apps" module provides some example Apps for straightforward cases:
+	
+	- *LocalApp*: uses the MuG DMP API to retrieve file names that are assumed
+	to be locally accessible;
+	
+	- *PyCOMPSsApp*: specific for Tools using PyCOMPSs;
+	
+	- *WorkflowApp*: inherits from both of the above, and implements the ability
+	to unstage intermediate outputs.
+		
 3. mug_datatypes:
      A repository of all data types available in MuG; it should closely mirror
      the contents of the DMP. 
