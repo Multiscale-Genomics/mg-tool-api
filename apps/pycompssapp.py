@@ -1,8 +1,9 @@
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # PyCOMPSs App
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 from .. import App
 from pycompss.api.api import compss_wait_on
+
 
 class PyCOMPSsApp(App):
     """
@@ -10,7 +11,7 @@ class PyCOMPSsApp(App):
     """
 
     def _post_run(self, tool_instance, output_files, output_metadata):
-        """ 
+        """
         Adds a wait command to ensure asynchronous tasks are
         terminated before unstaging.
         """

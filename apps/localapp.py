@@ -1,9 +1,10 @@
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Local Filesystem App
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 from .. import App, Metadata
 from dmp.dmp import dmp
 da = dmp()
+
 
 class LocalApp(App):
     """
@@ -11,19 +12,19 @@ class LocalApp(App):
 
     Uses the DMP API to retrieve inputs and register outputs.
     This simple App assumes the "file_path" values returned by the DMP API are
-    valid file locations on the local file system. 
+    valid file locations on the local file system.
 
     NOTE: As a reminder, the DMP API describes a data element using the
-    following fields (taken from the DMP API's documentation): 
+    following fields (taken from the DMP API's documentation):
 
     <user_id> - Identifier to uniquely locate the users files. Can be set to
-    			"common" if the files can be shared between users 
+                "common" if the files can be shared between users
     <file_path> - Location of the file in the file system
     <file_type> - File format
     <data_type> - The type of information in the file (RNA-seq, ChIP-seq, etc)
-    <source_id> - List of IDs of files processed to generate this file 
+    <source_id> - List of IDs of files processed to generate this file
     <meta_data> - Dictionary object containing the extra data related to the
-    			  generation of the file or describing the way it was processed
+                  generation of the file or describing the way it was processed
     """
 
     def _stage(self, input_ids):
@@ -56,6 +57,6 @@ class LocalApp(App):
             ids.append(da.set_file(
                 'user1',
                 file_name, metadata.file_type, metadata.data_type,
-                source = metadata.source_id,
-                meta = metadata.meta_data))
+                source=metadata.source_id,
+                meta=metadata.meta_data))
         return ids
