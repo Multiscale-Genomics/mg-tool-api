@@ -1,6 +1,3 @@
-from mug import datatypes as mug_datatypes
-from .metadata import Metadata
-
 # ------------------------------------------------------------------------------
 # Main App Interface
 # ------------------------------------------------------------------------------
@@ -80,13 +77,13 @@ class App(object):
         >>> app.launch(Tool, [<input_id>], {})
         """
 
-        "1) Retrieve and stage inputs"
+        # 1) Retrieve and stage inputs
         input_files, input_metadata = self._stage(input_ids)
 
-        "2) Instantiate and configure Tool"
+        # 2) Instantiate and configure Tool
         tool_instance = self._instantiate_tool(tool_class, configuration)
 
-        "3) Run Tool"
+        # 3) Run Tool
         input_files, input_metadata = self._pre_run(
             tool_instance, input_files, input_metadata)
 
@@ -96,14 +93,14 @@ class App(object):
         output_files, output_metadata = self._post_run(
             tool_instance, output_files, output_metadata)
 
-        "4) Check for errors"
+        # 4) Check for errors
         if any([outmd.error for outmd in output_metadata]):
             fatal = self._error(
                 [outmd for outmd in output_metadata if outmd.error])
             if fatal:
                 return None
 
-        "5) Unstage outputs"
+        # 5) Unstage outputs
         output_ids = self._unstage(output_files, output_metadata)
         return output_ids
 

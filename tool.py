@@ -1,4 +1,3 @@
-from mug import datatypes as mug_datatypes
 from . import Metadata
 
 from pycompss.api.task import task
