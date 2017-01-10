@@ -1,5 +1,3 @@
-from . import Metadata
-
 from pycompss.api.task import task
 from pycompss.api.constraint import constraint
 from pycompss.api.parameter import FILE_IN, FILE_OUT
@@ -18,8 +16,8 @@ class Tool(object):
     multiple inputs and outputs. Inputs and outputs are valid file names
     locally accessible to the Tool.
 
-    The "run()" method also receives an instance of Metadata for each of the
-    input data elements. It is the Tool's responsibility to generate the
+    The "run()" method also receives a dictionary of metadata entries for each
+    of the input data elements. It is the Tool's responsibility to generate the
     metadata for each of the output data elements, which are returned in a
     tuple (see code below).
 
@@ -71,8 +69,8 @@ class Tool(object):
         6. Handle failure in any of the above
 
         In case of failure, the Tool should return None instead of the output
-        file name, AND attach an Exception instance to the output metadata (see
-        Metadata.set_exception), to allow the wrapping App to report the
+        file name, AND attach an Exception instance to the output metadata (in
+        the "exception" field), to allow the wrapping App to report the
         error (see App).
 
         Note that this method calls the actual task(s). Ideally, each task
@@ -85,7 +83,7 @@ class Tool(object):
         input_file : list
             List of valid file names (str) locally accessible to the Tool.
         metadata : list
-            List of Metadata instances, one for each of the input_files.
+            List of metadata dictionaries, one for each of the input_files.
 
 
         Returns
@@ -93,7 +91,7 @@ class Tool(object):
         list, list
              1. a list of output files (str), each a valid file name locally
                 accessible to the Tool
-             2. a list of Metadata instances, one for each of the
+             2. a list of metadata dictionaries, one for each of the
                 output_files
 
 
@@ -104,15 +102,13 @@ class Tool(object):
         >>> tool.run([<input_1>, <input_2>], [<in_data_1>, <in_data_2>])
         ([<output_1>, <output_2>], [<out_data_1>, <out_data_2>])
         """
-        # 0: not required
         # 1:
         assert len(input_files) == 1
-        # 2: not required
         # 3:
         output_file = "/path/to/output_file"
         output_format = "OUTPUT_FILE_FORMAT"
         self._taskMethod(input_files[0]. output_file)
-        # 4: not required
         # 5:
-        output_metadata = Metadata(self.output_data_type, output_format)
+        output_metadata = dict(data_type=self.output_data_type,
+                               file_type=output_format)
         return ([output_file], [output_metadata])

@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
 # Local Filesystem App
 # ------------------------------------------------------------------------------
-from .. import App, Metadata
+from .. import App
 from dmp.dmp import dmp
 da = dmp()
 
@@ -38,12 +38,11 @@ class LocalApp(App):
             "Get the entry from the DMP database"
             file_obj = da.get_file_by_id('user1', iid)
             file_names.append(file_obj["file_path"])
-            metadata.append(Metadata(
-                file_obj["data_type"],
-                file_obj["file_type"],
-                file_obj["source_id"],
-                file_obj["meta_data"],
-                iid))
+            metadata.append(dict(
+                data_type=file_obj["data_type"],
+                file_type=file_obj["file_type"],
+                source_id=file_obj["source_id"],
+                metadata=file_obj["meta_data"]))
         return file_names, metadata
 
     def _unstage(self, output_files, output_metadata):
@@ -58,5 +57,5 @@ class LocalApp(App):
                 'user1',
                 file_name, metadata.file_type, metadata.data_type,
                 source=metadata.source_id,
-                meta=metadata.meta_data))
+                meta_data=metadata.meta_data))
         return ids

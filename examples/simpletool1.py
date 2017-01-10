@@ -1,4 +1,4 @@
-from .. import Tool, Metadata
+from .. import Tool
 from pycompss.api.parameter import FILE_IN, FILE_OUT
 from pycompss.api.task import task
 from pycompss.api.constraint import constraint
@@ -42,7 +42,10 @@ class SimpleTool1(Tool):
         output_file = input_file+".out"
 
         # input and output share most metadata
-        output_metadata = Metadata.get_child(metadata[0])
+        output_metadata = dict(
+            data_type=metadata[0]["data_type"],
+            file_type=metadata[0]["file_type"],
+            meta_data=metadata[0]["meta_data"])
 
         # handle error
         if not self.inputPlusOne(input_file, output_file):

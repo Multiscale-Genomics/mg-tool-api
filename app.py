@@ -32,7 +32,7 @@ class App(object):
     The App must check for errors in Tool execution and take the necessary
     actions to report the errors to the caller. Since Tools may generally be
     executed on separate machines, the Exceptions are passed by the Tools in
-    the Metadata (see Metadata.set_exception). App._error_report() should be
+    the metadata (in the "exception" field). App._error_report() should be
     called to report errors.
 
     As Apps need to be compatible with all Tools, it is unpractical to use Apps
@@ -145,7 +145,7 @@ class App(object):
         """
         Subclasses can specify here operations to be executed to treat and
         report errors occurred in Tool.run(). The passed error_metadata should
-        be only instances of Metadata that carry an Exception.
+        be only metadata dictionaries that carry an Exception.
 
         Returns True if the error is FATAL and entails immediate arrest of App
         operations (i.e. unstaging will not occur).

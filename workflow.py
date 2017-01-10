@@ -47,7 +47,7 @@ class Workflow(Tool):
         ----------
         output_file : str
             Valid file name locally accessible to the Tool.
-        metadata : Metadata
+        metadata : dict
             Corresponding metadata instance.
 
 
