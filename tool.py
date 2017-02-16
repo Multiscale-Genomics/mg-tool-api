@@ -55,6 +55,20 @@ class Tool(object):
         This method performs the actions required to achieve the Tool's
         functionality. Note the use of the "@task" and "@constraint"
         decorators.
+
+        Parameters
+        ----------
+        input_file : str
+            valid file name locally accessible to the Tool.
+        output_file : str
+            valid file name locally accessible to the Tool.
+
+
+        Returns
+        -------
+        The returned value(s) is specific to the implementation. Note that
+        Exceptions cannot be risen from taskMethods, and therefore will need to
+        be returned to "run" in order to be handled.
         """
         pass
 
