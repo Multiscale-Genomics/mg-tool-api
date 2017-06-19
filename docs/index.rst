@@ -10,6 +10,9 @@ Welcome to MG Tools API's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   install
+   tools-api
+
 
 
 Indices and tables
