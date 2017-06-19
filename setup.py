@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='mg-tool-api',
+    name='mgToolApi',
     version='0.3',
     description='MuG DMP API',
     
