@@ -11,8 +11,6 @@ from app import App
 from metadata import Metadata
 from tool import Tool
 from workflow import Workflow
-#import apps
-#import examples
 
 __author__ = 'Marco Pasi, Javier Conejero'
 __version__ = '0.3'
