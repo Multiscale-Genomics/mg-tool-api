@@ -12,6 +12,8 @@ Welcome to MG Tools API's documentation!
 
    install
    tools-api
+   howto_pipeline
+   howto_tool
 
 
 

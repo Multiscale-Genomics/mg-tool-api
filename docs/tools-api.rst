@@ -30,7 +30,7 @@ Tool Definitions
    
    Methods
    -------
-   .. autoclass:: mgToolApi.metadata.Metadata
+   .. autoclass:: mgToolApi.tool.Tool
       :members:
 
 
