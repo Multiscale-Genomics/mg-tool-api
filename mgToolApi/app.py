@@ -72,9 +72,13 @@ class App(object):
 
         Example
         -------
-        >>> import App, Tool
-        >>> app = App()
-        >>> app.launch(Tool, [<input_id>], {})
+        
+        .. code-block:: python
+           :linenos:
+
+           import App, Tool
+           app = App()
+           app.launch(Tool, [<input_id>], {})
         """
 
         # 1) Retrieve and stage inputs

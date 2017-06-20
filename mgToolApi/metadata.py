@@ -90,11 +90,15 @@ class Metadata(object):
 
         Example
         -------
-        >>> import Metadata
-        >>> metadata1 = Metadata(...)
-        >>> metadata2 = Metadata(...)
-        >>> child_metadata =
-        >>>     Metadata.get_child([metadata1, metadata2])
+        
+        .. code-block:: python
+           :linenos:
+
+           import Metadata
+           metadata1 = Metadata(...)
+           metadata2 = Metadata(...)
+           child_metadata =
+               Metadata.get_child([metadata1, metadata2])
         """
         if type(parents) not in [list, tuple]:
             parents = (parents,)

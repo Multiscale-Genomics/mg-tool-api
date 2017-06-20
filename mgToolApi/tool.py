@@ -113,10 +113,13 @@ class Tool(object):
 
         Example
         -------
-        >>> import Tool
-        >>> tool = Tool(configuration = {})
-        >>> tool.run([<input_1>, <input_2>], [<in_data_1>, <in_data_2>])
-        ([<output_1>, <output_2>], [<out_data_1>, <out_data_2>])
+        .. code-block:: python
+           :linenos:
+
+           import Tool
+           tool = Tool(configuration = {})
+           tool.run(([<input_1>, <input_2>], [<in_data_1>, <in_data_2>])
+              ([<output_1>, <output_2>], [<out_data_1>, <out_data_2>]))
         """
         # 0: not required
         # 1:
