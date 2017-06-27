@@ -13,6 +13,33 @@ Author: WHO?
 
 
 **********
+24/05/2017
+**********
+Author: BSC Team
+
+- Created a tools demos folder.
+- Added summer tools to tools demos.
+- Added new skeleton application "MYAPP.py" for educational purposes.
+- Added a script for running the summer demo and provide a hint on MYAPP execution.
+- Added cleaning script. Removes *.pyc and demo out files (use with care).
+- Updated to version 0.4.
+
+
+**********
+23/05/2017
+**********
+Author: BSC Team
+
+- The project has been reestructured in order to ease the comprehension of the application template.
+- A generic launcher for testing the demo application with PyCOMPSs has been included.
+- The DMG Api has been removed from the project.
+- The code has been cleaned.
+- The documentation has been also cleaned.
+- Updated to version 0.3.
+- Compliant with pep8 style.
+
+
+**********
 16/12/2016
 **********
 Author: BSC Team

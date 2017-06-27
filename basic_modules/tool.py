@@ -1,14 +1,12 @@
-from . import Metadata
-
-from pycompss.api.task import task
-from pycompss.api.constraint import constraint
+# from mug import datatypes as mug_datatypes
 from pycompss.api.parameter import FILE_IN, FILE_OUT
+from pycompss.api.task import task
+from basic_modules.metadata import Metadata
 
-# ------------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
 # Main Tool interface
-# ------------------------------------------------------------------------------
-
-
+# -----------------------------------------------------------------------------
 class Tool(object):
     """
     Abstract class describing a specific operation on a precise input data type
@@ -25,9 +23,8 @@ class Tool(object):
 
     The "run()" method calls the relevant methods that perform the operations
     require to implement the Tool's functionality. Each of these methods should
-    be decorated using the "@task" decorator. Further, the execution
-    environment in which each operation is run can be configured by decorating
-    the appropriate method(s) using the "@constraint" decorator.
+    be decorated using the "@task" decorator. Further, the task constraints can
+    be configured using the "@constraint" decorator.
 
     See also Workflow.
     """
@@ -55,24 +52,11 @@ class Tool(object):
         This method performs the actions required to achieve the Tool's
         functionality. Note the use of the "@task" and "@constraint"
         decorators.
-
-        Parameters
-        ----------
-        input_file : str
-            valid file name locally accessible to the Tool.
-        output_file : str
-            valid file name locally accessible to the Tool.
-
-
-        Returns
-        -------
-        The returned value(s) is specific to the implementation. Note that
-        Exceptions cannot be risen from taskMethods, and therefore will need to
-        be returned to "run" in order to be handled.
         """
-        pass
+        output_file = "/path/to/output_file"
+        return output_file
 
-    def run(self, input_files, metadata=None):
+    def run(self, input_files, output_files, metadata=None):
         """
         Perform the required operations to achieve the functionality of the
         Tool. This usually involves:
@@ -123,10 +107,9 @@ class Tool(object):
         assert len(input_files) == 1
         # 2: not required
         # 3:
-        output_file = "/path/to/output_file"
-        output_format = "OUTPUT_FILE_FORMAT"
-        self._taskMethod(input_files[0]. output_file)
+        output_file = self.action(input_files[0])
         # 4: not required
         # 5:
+        output_format = "OUTPUT_FILE_FORMAT"
         output_metadata = Metadata(self.output_data_type, output_format)
         return ([output_file], [output_metadata])

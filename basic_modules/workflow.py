@@ -1,10 +1,9 @@
-from . import Tool
+
+
 # ------------------------------------------------------------------------------
 # Main Workflow interface
 # ------------------------------------------------------------------------------
-
-
-class Workflow(Tool):
+class Workflow(object):
     """
     Abstract class describing a Workflow.
 
@@ -33,34 +32,9 @@ class Workflow(Tool):
     """
     input_data_type = None
     output_data_type = None
-    intermediate_outputs = []
     configuration = {}
 
-    def add_intermediate(self, output_file, metadata):
-        """
-        Add an intermediate output file, complete with its metadata. It is the
-        App's responsibility to look for these and unstage them: see also
-        WorkflowApp.
-
-
-        Parameters
-        ----------
-        output_file : str
-            Valid file name locally accessible to the Tool.
-        metadata : Metadata
-            Corresponding metadata instance.
-
-
-        Returns
-        -------
-        bool
-            True upon success.
-        """
-        for fname, meta in zip(output_file, metadata):
-            self.intermediate_outputs.append((fname, meta))
-        return True
-
-    def run(self, input_files, metadata=None):
+    def run(self, input_files, metadata, output_files):
         """
         Perform the required operations to achieve the functionality of the
         Workflow. This usually involves:

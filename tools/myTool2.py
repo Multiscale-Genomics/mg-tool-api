@@ -5,46 +5,39 @@ from basic_modules.tool import Tool
 
 
 # -----------------------------------------------------------------------------
-class SimpleTool1(Tool):
+class Tool2(Tool):
     """
-    Mockup Tool that defines a task with one FILE_IN input and one
+    Mockup Tool that defines a task with two FILE_IN inputs and one
     FILE_OUT output
     """
 
     # @constraint()
     @task(input_file=FILE_IN, output_file=FILE_OUT,
           returns=int, isModifier=False)
-    def inputPlusOne(self, input_file, output_file):
+    def myTask2(self, input_file, output_file):
         """
-        Task that writes a file with the content from a file plus one
         @param input_file Input file where the initial content is
         @param output_file Output file where the result is stored
         @return bool True if done successfully. False on the contrary.
         """
-        try:
-            data = None
-            with open(input_file, 'r+') as f:
-                data = f.readline()
-            print "DATA: ", data
-            with open(output_file, 'w') as f:
-                f.write(str(int(data) + 1))
-            return True
-        except:
-            return False
+        # do something with input_file and output_file
+        pass
+
+        with open(output_file, 'w') as f:
+            f.write("this is a test file")
+
+        return 0
 
     def run(self, input_files, metadata, output_files):
         """
         Standard function to call a task
         """
 
-        # input and output share most metadata
-        output_metadata = Metadata.get_child(metadata[0])
-
         # Run the tool
-        taskResult = self.inputPlusOne(input_files[0], output_files[0])
+        taskResult = self.myTask2(input_files[0], output_files[0])
 
         # handle error
-        # [COMMENT] inputPlusOne is a task it will return a future object.
+        # [COMMENT] myTask is a task it will return a future object.
         # Consequently, the following condition will never be true.
         # Alternatively if output metadata is a parameter of the task, the
         # task could add something to it within it's execution, and check its
@@ -55,6 +48,6 @@ class SimpleTool1(Tool):
                 "SimpleTool1: Could not process file {}.".format(input_file)))
             output_file = None
         '''
-        return (output_files, [output_metadata])
+        return (output_files, metadata)
 
 # -----------------------------------------------------------------------------

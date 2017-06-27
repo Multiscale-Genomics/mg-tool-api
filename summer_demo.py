@@ -5,17 +5,16 @@ Simple example of Workflow using PyCOMPSs, called using an App.
   reads an integer from a file, increments it, and writes it to file
 - SimpleTool2:
   reads two integers from two file and writes their sum to file
-
 - SimpleWorkflow:
   implements the following workflow:
 
       1           2
-      |           |
-     Tool1       Tool1
-      |           |
+      |			  |
+ SimpleTool1  SimpleTool1
+      |			  |
       +-----.-----+
             |
-          Tool2
+       SimpleTool2
             |
             3
 
@@ -26,18 +25,17 @@ Simple example of Workflow using PyCOMPSs, called using an App.
   unstage intermediate outputs.
 """
 
-import os
-from .. import Workflow
-from simpletool1 import SimpleTool1
-from simpletool2 import SimpleTool2
+from basic_modules.workflow import Workflow
+from tools_demos.simpleTool1 import SimpleTool1
+from tools_demos.simpleTool2 import SimpleTool2
 
 
 class SimpleWorkflow(Workflow):
     """
-    input1      input2
-      |           |
-     Tool1       Tool1
-      |           |
+    input1		input2
+      |			  |
+    Tool1		 Tool1
+      |			  |
       +-----.-----+
             |
           Tool2
@@ -47,57 +45,96 @@ class SimpleWorkflow(Workflow):
 
     input_data_type = ["number file", "number file"]
     output_data_type = "number file"
+    configuration = {}
 
-    def run(self, files, metadata):
-        # 0. perform checks
-        assert len(files) == 2
+    def __init__(self, configuration={}):
+        """
+        Initialise the tool with its configuration.
+
+
+        Parameters
+        ----------
+        configuration : dict
+            a dictionary containing parameters that define how the operation
+            should be carried out, which are specific to each Tool.
+        """
+        self.configuration.update(configuration)
+
+    def run(self, input_files, metadata, output_files):
+
+        print "\t0. perform checks"
+        assert len(input_files) == 2
         assert len(metadata) == 2
-        input1, input2 = files
+        input1, input2 = input_files
         inmd1, inmd2 = metadata
+        output = output_files[0]
 
-        # 1.a Instantiate Tool and run
+        print "\t1.a Instantiate Tool 1 and run"
         simpleTool1 = SimpleTool1(self.configuration)
-        output1, outmd1 = simpleTool1.run([input1], [inmd1])
+        output1, outmd1 = simpleTool1.run([input1], [inmd1], [input1 + '.out'])
 
-        # 2.a Add outputs to intermediates
-        self.add_intermediate(output1, outmd1)
+        print "\t1.b (Instantiate Tool) and run"
+        output2, outmd2 = simpleTool1.run([input2], [inmd2], [input2 + '.out'])
 
-        # 1.b (Instantiate Tool) and run
-        output2, outmd2 = simpleTool1.run([input2], [inmd2])
-
-        # 2.b Add outputs to intermediates
-        self.add_intermediate(output2, outmd2)
-
-        # 1.c Instantiate Tool and run
+        print "\t2. Instantiate Tool and run"
         simpleTool2 = SimpleTool2(self.configuration)
-        output3, outmd3 = simpleTool2.run(
-            (output1[0], output2[0]), (outmd1[0], outmd2[0]))
+        output3, outmd3 = simpleTool2.run([output1[0], output2[0]],
+                                          [outmd1[0], outmd2[0]],
+                                          [output])
 
-        # 4. Optionally edit the output metadata
-        # 5. Return
+        print "\t4. Optionally edit the output metadata"
+        print "\t5. Return"
         return (output3, outmd3)
 
 
-# ------------------------------------------------------------------------------
-if __name__ == "__main__":
-    # 1. Create some data: 2 input files
-    with open("file1", "w") as f:
-        f.write("5")
-    with open("file2", "w") as f:
-        f.write("9")
+# -----------------------------------------------------------------------------
 
-    # 2. Register the data with the DMP
-    from dmp import dmp
-    da = dmp()
-    pwd = os.getcwd()
-    opj = os.path.join
-    id1 = da.set_file("user1", opj(pwd, "file1"), "plain text", "number file")
-    id2 = da.set_file("user1", opj(pwd, "file2"), "plain text", "number file")
-    print da.get_files_by_user("user1")
+def main(inputFiles, inputMetadata, outputFiles):
+    """
+    Main function
+    -------------
 
-    # 3. Instantiate and launch the App
-    from ..apps import WorkflowApp
+    This function launches the app.
+    """
+
+    # import pprint  # Pretty print - module for dictionary fancy printing
+
+    # 1. Instantiate and launch the App
+    print "1. Instantiate and launch the App"
+    from apps.workflowapp import WorkflowApp
     app = WorkflowApp()
-    id3 = app.launch(SimpleWorkflow, [id1, id2], {})
+    result = app.launch(SimpleWorkflow, inputFiles, inputMetadata,
+                        outputFiles, {})
 
-    print da.get_files_by_user("user1")
+    # 2. The App has finished
+    print "2. Execution finished"
+
+
+if __name__ == "__main__":
+    # Note that the code that was within this if condition has been moved
+    # to a function called 'main'.
+    # The reason for this change is to improve performance.
+
+    inputFile1 = "file1"
+    inputFile2 = "file2"
+    metadataFile = "metadataFile"
+    outputFile = "outputFile"
+
+    # The VRE has to prepare the data to be processed.
+    # In this example we create 2 files for testing purposes.
+    print "1. Create some data: 2 input files"
+    with open(inputFile1, "w") as f:
+        f.write("5")
+    with open(inputFile2, "w") as f:
+        f.write("9")
+    print "\t* Files successfully created"
+
+    # Read metadata file and build a dictionary with the metadata:
+    from basic_modules.metadata import Metadata
+    # Maybe it is necessary to prepare a metadata parser from json file
+    # when building the Metadata objects.
+    inputMetadataF1 = Metadata("Number", "plainText")
+    inputMetadataF2 = Metadata("Number", "plainText")
+
+    main([inputFile1, inputFile2], [inputMetadataF1, inputMetadataF2],
+         [outputFile])

@@ -1,8 +1,9 @@
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Workflow App
-# ------------------------------------------------------------------------------
-from . import PyCOMPSsApp, LocalApp
-from .. import Workflow
+# -----------------------------------------------------------------------------
+from apps.localapp import LocalApp
+from apps.pycompssapp import PyCOMPSsApp
+from basic_modules.workflow import Workflow
 
 
 class WorkflowApp(PyCOMPSsApp, LocalApp):
@@ -18,6 +19,4 @@ class WorkflowApp(PyCOMPSsApp, LocalApp):
         """
         output_files, output_metadata = super(WorkflowApp, self)._post_run(
             tool_instance, output_files, output_metadata)
-        if issubclass(tool_instance.__class__, Workflow):
-            self._unstage(*zip(*tool_instance.intermediate_outputs))
         return output_files, output_metadata

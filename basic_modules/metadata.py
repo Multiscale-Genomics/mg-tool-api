@@ -1,8 +1,7 @@
-import copy
-
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Metadata class
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+import copy
 
 
 class Metadata(object):
@@ -42,10 +41,10 @@ class Metadata(object):
 
     def __repr__(self):
         return """<Metadata: ({md.id})
-    data_type: {md.data_type}
-    file_type: {md.file_type}
-    source_id: {md.source_id}
-    meta_data: {md.meta_data}>""".format(md=self)
+            data_type: {md.data_type}
+            file_type: {md.file_type}
+            source_id: {md.source_id}
+            meta_data: {md.meta_data}>""".format(md=self)
 
     def set_exception(self, exception):
         """
@@ -94,7 +93,7 @@ class Metadata(object):
         >>> metadata1 = Metadata(...)
         >>> metadata2 = Metadata(...)
         >>> child_metadata =
-        >>>     Metadata.get_child([metadata1, metadata2])
+        >>> 	Metadata.get_child([metadata1, metadata2])
         """
         if type(parents) not in [list, tuple]:
             parents = (parents,)
