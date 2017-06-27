@@ -1,2 +1,4 @@
 - move demos to a demos folder
-- 
+- move examples to a specific folder
+- merge documentation and setup
+- make version0.4 master
