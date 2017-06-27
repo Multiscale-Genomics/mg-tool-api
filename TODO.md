@@ -2,3 +2,5 @@
 - move examples to a specific folder
 - merge documentation and setup
 - make version0.4 master
+- Add JSON parsing to app.py
+- Add logging to app.py
