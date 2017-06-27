@@ -1,0 +1,55 @@
+CHANGELOG:
+----------
+
+**********
+DD/MM/YYYY
+**********
+Author: WHO?
+
+- Change 1.
+- Change 2.
+
+- Change N.
+
+
+**********
+16/12/2016
+**********
+Author: BSC Team
+
+- Structure:
+    mg-tool-api-versionX
+    \apps
+        __init__.py
+        localapp.py
+        pycompssapp.py
+        workflowapp.py
+    \basic_modules
+        __init__.py
+        app.py
+        datatypes.py
+        metadata.py
+        tool.py
+        workflow.py
+    \examples
+        summer.py
+        simpleTool1.py
+        simpleTool2.py
+- Workflow can not inherit from tool. Because:
+    - Workflow is composed by a set of tools.
+    - Nesting problem appears.
+- tool.py:
+    - output_file parameter should be in the signature of the funcion _taskMethod and FILE_OUT parameter should not be returned by the function. Example:
+    @task(input_file = FILE_IN, output_file = FILE_OUT, isModifier = False)
+    def _taskMethod(self, input_file, output_file):
+        """
+        This method performs the actions required to achieve the Tool's
+        functionality. Note the use of the "@task" and "@constraint"
+        decorators.
+        """
+        output_file = "/path/to/output_file"
+    - Run method has to call _taskMethod
+- Create a new package with basic modules instead of having original classes in the root of mg-tool-api
+- Write tools in different files.
+- The tools should be in different files: Relative imports are not recommended: https://www.python.org/dev/peps/pep-0008/
+- Recommended code stype: https://www.python.org/dev/peps/pep-0008/
