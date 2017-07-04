@@ -26,8 +26,8 @@ Simple example of Workflow using PyCOMPSs, called using an App.
 """
 
 from basic_modules.workflow import Workflow
-from tools_demos.simpleTool1 import SimpleTool1
-from tools_demos.simpleTool2 import SimpleTool2
+from simpleTool1 import SimpleTool1
+from simpleTool2 import SimpleTool2
 
 
 class SimpleWorkflow(Workflow):
@@ -89,7 +89,7 @@ class SimpleWorkflow(Workflow):
 
 # -----------------------------------------------------------------------------
 
-def main(inputFiles, inputMetadata, outputFiles):
+def summer(inputFiles, inputMetadata, outputFiles):
     """
     Main function
     -------------
@@ -110,11 +110,9 @@ def main(inputFiles, inputMetadata, outputFiles):
     print "2. Execution finished"
 
 
-if __name__ == "__main__":
-    # Note that the code that was within this if condition has been moved
-    # to a function called 'main'.
-    # The reason for this change is to improve performance.
+# -----------------------------------------------------------------------------
 
+def main():
     inputFile1 = "file1"
     inputFile2 = "file2"
     metadataFile = "metadataFile"
@@ -136,5 +134,5 @@ if __name__ == "__main__":
     inputMetadataF1 = Metadata("Number", "plainText")
     inputMetadataF2 = Metadata("Number", "plainText")
 
-    main([inputFile1, inputFile2], [inputMetadataF1, inputMetadataF2],
+    summer([inputFile1, inputFile2], [inputMetadataF1, inputMetadataF2],
          [outputFile])

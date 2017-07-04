@@ -8,7 +8,7 @@ echo "*** Summer application test ***"
 echo "*******************************"
 echo ""
 
-runcompss -g summer_demo.py
+runcompss -g run_demo.py summer
 
 #echo ""
 #echo "*******************************"
