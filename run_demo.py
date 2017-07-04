@@ -20,7 +20,7 @@ deleted in the "bin/cleanDemos.sh" script.
 import sys
 import demos
 import importlib
-import pycompss_mock
+# import pycompss_mock
 
 if __name__ == "__main__":
     demoname = sys.argv[1]
