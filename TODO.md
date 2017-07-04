@@ -1,6 +1,5 @@
 - move demos to a demos folder
 - move examples to a specific folder
-- merge documentation and setup
-- make version0.4 master
 - Add JSON parsing to app.py
 - Add logging to app.py
+- Change Tool inputs/outputs to dicts with roles

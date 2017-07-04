@@ -1,9 +1,9 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='mgToolApi',
+    name='mg-tool-api',
     
-    version='0.4',
+    version='0.5',
     description='MuG Tool API',
     
     url='http://www.multiscalegenomics.eu',
