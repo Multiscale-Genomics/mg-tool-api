@@ -1,5 +1,14 @@
-from pycompss.api.parameter import FILE_IN, FILE_OUT
-from pycompss.api.task import task
+from __future__ import print_function
+
+try:
+    from pycompss.api.parameter import FILE_IN, FILE_OUT
+    from pycompss.api.task import task
+except ImportError:
+    print ("[Warning] Cannot import \"pycompss\" API packages.")
+    print ("          Using mock decorators.")
+
+    from dummy_pycompss import FILE_IN, FILE_OUT
+
 from basic_modules.metadata import Metadata
 from basic_modules.tool import Tool
 
@@ -25,11 +34,11 @@ class SimpleTool1(Tool):
             data = None
             with open(input_file, 'r+') as f:
                 data = f.readline()
-            print "DATA: ", data
+            print("DATA: ", data)
             with open(output_file, 'w') as f:
                 f.write(str(int(data) + 1))
             return True
-        except:
+        except IOError:
             return False
 
     def run(self, input_files, metadata, output_files):

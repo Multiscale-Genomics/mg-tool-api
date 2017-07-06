@@ -1,6 +1,16 @@
+from __future__ import print_function
+
 # from mug import datatypes as mug_datatypes
-from pycompss.api.parameter import FILE_IN, FILE_OUT
-from pycompss.api.task import task
+
+try:
+    from pycompss.api.parameter import FILE_IN, FILE_OUT
+    from pycompss.api.task import task
+except ImportError:
+    print ("[Warning] Cannot import \"pycompss\" API packages.")
+    print ("          Using mock decorators.")
+
+    from dummy_pycompss import FILE_IN, FILE_OUT
+
 from basic_modules.metadata import Metadata
 
 
