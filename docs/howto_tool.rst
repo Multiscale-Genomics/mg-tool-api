@@ -7,10 +7,17 @@ The Tool is the core element when it comes to running a program of function with
 
 All functions contain at least a `run(self)` function which is called by the pipeline. The run function takes the input files (list), defined output files (list) and relevant metadata (dict). Returned by the run function is a list containing a list of the output files as the first object and a list of metadata dict objects as the second element.
 
+
+Repository Structure
+--------------------
+
+All tools should be placed within the `tools` directory within the package.
+
+
 Basic Tool
 ----------
 
-This is a test tool that takes an input file, writes some text to it and then returns the file
+This is a test tool that takes an input file, writes some text to it and then returns the file. The file is called `testTool.py`.
 
 .. code-block:: python
    :linenos:
