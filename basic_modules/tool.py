@@ -121,7 +121,8 @@ class Tool(object):
         assert len(input_files) == 1
         # 2: not required
         # 3:
-        output_file = self.action(input_files[0])
+
+        output_file = self._taskMethod(input_files[0], input_files[0] + '.out')
         # 4: not required
         # 5:
         output_format = "OUTPUT_FILE_FORMAT"
