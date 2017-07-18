@@ -94,7 +94,7 @@ class App(object):
                                                        output_metadata)
 
         print "3) Check for errors"
-        if any([outmd.error for outmd in output_metadata]):
+        if any(['error' in outmd for outmd in output_metadata]):
             fatal = self._error(
                 [outmd for outmd in output_metadata if outmd.error])
             if fatal:
