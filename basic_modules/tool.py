@@ -16,6 +16,7 @@ except ImportError:
     from dummy_pycompss import FILE_IN, FILE_OUT
     from dummy_pycompss import task
 
+from basic_modules.metadata import Metadata
 
 # -----------------------------------------------------------------------------
 # Main Tool interface
