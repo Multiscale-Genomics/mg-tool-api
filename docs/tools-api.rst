@@ -4,42 +4,42 @@ Tools API
 App Initiating and handling
 ---------------------------
 
-.. automodule:: mgToolApi.app
-   
+.. automodule:: basic_modules.app
+
    Methods
    -------
-   .. autoclass:: mgToolApi.app.App
+   .. autoclass:: basic_modules.app.App
       :members:
 
 
 Metadata Handling
 -----------------
 
-.. automodule:: mgToolApi.metadata
-   
+.. automodule:: basic_modules.metadata
+
    Methods
    -------
-   .. autoclass:: mgToolApi.metadata.Metadata
+   .. autoclass:: basic_modules.metadata.Metadata
       :members:
 
 
 Tool Definitions
 ----------------
 
-.. automodule:: mgToolApi.tool
-   
+.. automodule:: basic_modules.tool
+
    Methods
    -------
-   .. autoclass:: mgToolApi.tool.Tool
+   .. autoclass:: basic_modules.tool.Tool
       :members:
 
 
 Workflow Definitions
 --------------------
 
-.. automodule:: mgToolApi.workflow
-   
+.. automodule:: basic_modules.workflow
+
    Methods
    -------
-   .. autoclass:: mgToolApi.workflow.Workflow
+   .. autoclass:: basic_modules.workflow.Workflow
       :members:
