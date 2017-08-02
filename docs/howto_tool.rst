@@ -1,5 +1,5 @@
-Creating a Tool
-===============
+HOWTO - Tools
+=============
 
 This document provides a tutorial for the creation of a tool that can be used within a pipeline within the MuG VRE. All functions should be wrapped up as a tool, this then allows for the tools to be easily reused by other pipelines and also deployed onto the compute cluster.
 
@@ -69,6 +69,12 @@ The run function then calls the `test_writer` function. This uses the python dec
 Decorators can also be used to define the resources that are required by function. They can be used to define a set of machines that the task should be run on, required CPU capacity  or the amount of RAM that is required by the task. Defining these parameters helps the COMPSS infrastructure correctly allocate jobs so that they are able to run as soon as the resources allow and prevent the job failing by being run on a machine that does not have the correct resources.
 
 Further details about COMPSS and pyCOMPSs can be found at the BSC website along with specific tutorials about how to write functions that can utilise the full power of COMPSS.
+
+
+pyCOMPSs within the Tool
+------------------------
+
+When importing the modules
 
 
 Practical Example
