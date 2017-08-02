@@ -1,45 +1,30 @@
 Tools API
 =========
 
-App Initiating and handling
----------------------------
+.. automodule:: basic_modules
 
-.. automodule:: basic_modules.app
+   App Initiating and handling
+   ===========================
 
-   Methods
-   -------
    .. autoclass:: basic_modules.app.App
       :members:
 
 
-Metadata Handling
------------------
+   Metadata Handling
+   =================
 
-.. automodule:: basic_modules.metadata
-
-   Methods
-   -------
    .. autoclass:: basic_modules.metadata.Metadata
       :members:
 
 
-Tool Definitions
-----------------
+   Tool Definitions
+   ================
 
-.. automodule:: basic_modules.tool
-
-   Methods
-   -------
    .. autoclass:: basic_modules.tool.Tool
       :members:
 
 
-Workflow Definitions
---------------------
-
-.. automodule:: basic_modules.workflow
-
-   Methods
-   -------
+   Workflow Definitions
+   ====================
    .. autoclass:: basic_modules.workflow.Workflow
       :members:
