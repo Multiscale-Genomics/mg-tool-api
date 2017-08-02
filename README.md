@@ -1,5 +1,7 @@
 # mg-tool-api
 
+[![Documentation Status](https://readthedocs.org/projects/mg-tool-api/badge/?version=latest)](http://mg-tool-api.readthedocs.io/en/latest/?badge=latest)
+
 ## Introduction
 This library implements the specifications detailed in the
 current version (23/09/2016) of the Deliverable 6.1 document: "Design of
@@ -17,7 +19,7 @@ VRE.
 
 2. Achieve vertical interoperability by using COMPSs, and allowing
 developers to specify the execution enviroment requirements for each tool by
-using COMPSs "constraints" decorator. 
+using COMPSs "constraints" decorator.
 
 3. Provide a unified, simple paradigm to access the diverse data storage
 facilities defined in the DMP, by wrapping data in Python objects (see
@@ -26,7 +28,7 @@ data retrieval; this also makes changes in the DMP transparent to the tools.
 
 4. Simplify the construction of workflows, by conceiving tools such that it is
 straightforward to combine them in workflows, using COMPSs "task" decorator and
-the COMPSs runtime as the workflow scheduler. 
+the COMPSs runtime as the workflow scheduler.
 
 ## Implementation overview
 1. Tool:
@@ -40,20 +42,20 @@ the COMPSs runtime as the workflow scheduler.
 	Is the main entry point to the tools layer of the VRE; it deals with heterogeneity
 	in the way Tools are run, in terms of filesystem access, runtime environment,
 	error reporting, and more. Therefore, Apps are compatible with all Tools.
-	Apps implement a "launch" method, which prepares and runs a single instance of Tool. 
+	Apps implement a "launch" method, which prepares and runs a single instance of Tool.
 	The "apps" module provides some example Apps for straightforward cases:
-	
+
 	- *LocalApp*: uses the MuG DMP API to retrieve file names that are assumed
 	to be locally accessible;
-	
+
 	- *PyCOMPSsApp*: specific for Tools using PyCOMPSs;
-	
+
 	- *WorkflowApp*: inherits from both of the above, and implements the ability
 	to unstage intermediate outputs.
-		
+
 3. mug_datatypes:
      A repository of all data types available in MuG; it should closely mirror
-     the contents of the DMP. 
+     the contents of the DMP.
 4. mug_conversion:
      A library containing commodity functions to perform frequently needed
      conversion operations to and from the formats defined in the DMP. Tool
