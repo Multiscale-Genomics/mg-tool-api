@@ -28,8 +28,6 @@ class Tool(object):
 
     See also Workflow.
     """
-    input_data_type = None
-    output_data_type = None
     configuration = {}
 
     def __init__(self, configuration={}):
@@ -53,10 +51,9 @@ class Tool(object):
         functionality. Note the use of the "@task" and "@constraint"
         decorators.
         """
-        output_file = "/path/to/output_file"
-        return output_file
+        return True
 
-    def run(self, input_files, output_files, metadata=None):
+    def run(self, input_files, output_files):
         """
         Perform the required operations to achieve the functionality of the
         Tool. This usually involves:
@@ -68,11 +65,6 @@ class Tool(object):
         5. Write metadata for the output data
         6. Handle failure in any of the above
 
-        In case of failure, the Tool should return None instead of the output
-        file name, AND attach an Exception instance to the output metadata (see
-        Metadata.set_exception), to allow the wrapping App to report the
-        error (see App).
-
         Note that this method calls the actual task(s). Ideally, each task
         should have a unique name that identifies the operation: these will be
         used by the COMPSs runtime to build a graph and trace.
@@ -80,36 +72,37 @@ class Tool(object):
 
         Parameters
         ----------
-        input_file : list
-            List of valid file names (str) locally accessible to the Tool.
-        metadata : list
-            List of Metadata instances, one for each of the input_files.
+        input_files : input_file_spec
+            Structure containing information on Tool input files,
+            in particular paths (input_files.get_path()) and
+            corresponding metadata (input_files.get_metadata()).
+        output_files : output_file_spec
+            Structure containing information on Tool output files,
+            in particular paths (output_files.get_path()) and
+            default metadata (output_files.get_metadata()).
 
 
         Returns
         -------
-        list, list
-             1. a list of output files (str), each a valid file name locally
-                accessible to the Tool
-             2. a list of Metadata instances, one for each of the
-                output_files
+        output_files : output_file_spec
+            The output_files structure is returned, after appropriately
+            calling output_files.confirm_output() for as many outputs
+            that have been created by the tool.
 
 
-        Example
-        -------
-        >>> import Tool
-        >>> tool = Tool(configuration = {})
-        >>> tool.run([<input_1>, <input_2>], [<in_data_1>, <in_data_2>])
-        ([<output_1>, <output_2>], [<out_data_1>, <out_data_2>])
         """
         # 0: not required
         # 1:
-        assert len(input_files) == 1
+        assert input_files.nfiles > 1
+        input_file = input_files.get_path()
+        output_file = output_files.get_path()
         # 2: not required
         # 3:
-        output_file = self.action(input_files[0])
+        self._taskMethod(input_file, output_file)
         # 4: not required
         # 5:
-        output_format = "OUTPUT_FILE_FORMAT"
-        output_metadata = Metadata(self.output_data_type, output_format)
-        return ([output_file], [output_metadata])
+        output_files.confirm_output(
+            output_file,
+            source_paths=[input_file],
+            metadata=output_files.get_metadata())
+        return output_files

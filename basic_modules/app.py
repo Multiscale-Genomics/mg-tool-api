@@ -1,5 +1,5 @@
 # from mug import datatypes as mug_datatypes
-from metadata import Metadata
+from basic_modules.metadata import Metadata
 from basic_modules.file_spec import input_file_spec, output_file_spec
 import json
 
