@@ -1,6 +1,6 @@
 # from mug import datatypes as mug_datatypes
 from metadata import Metadata
-from basic_modules import input_file_spec, output_file_spec
+from basic_modules.file_spec import input_file_spec, output_file_spec
 import json
 
 
@@ -89,6 +89,37 @@ class App(object):
         print "3) Pack information to JSON"
         return self._write_json(results_json)
 
+    def _read_json(self, json_path):
+        """
+        Read config.json to obtain:
+        input_files: input_file_spec containing information about tool inputs
+        output_files: output_file_spec containing information about tool
+                      outputs
+        arguments: dictionary containing information about tool arguments
+
+        For more information see the schema for config.json.
+        """
+        configuration = json.load(json_path)
+        input_files = input_file_spec()
+        for input_file in configuration["input_files"]:
+            input_files.add_file(
+                role=input_file["name"],
+                path=input_file["path"],
+                metadata=input_file["metadata"]
+            )
+        output_files = output_file_spec()
+        for output_file in configuration["output_files"]:
+            output_files.add_file(
+                role=output_file["name"],
+                path=output_file["path"],
+                metadata=output_file["metadata"]
+            )
+        arguments = dict()
+        for argument in configuration["arguments"]:
+            arguments[argument["name"]] = argument["value"]
+
+        return input_files, output_files, arguments
+
     def _instantiate_tool(self, tool_class, configuration):
         """
         Instantiate the Tool with its configuration.
@@ -118,3 +149,23 @@ class App(object):
         """
         return output_files
 
+    def _write_json(self, input_files, output_files, json_path):
+        """
+        Write results.json using information from input_file and output_files:
+        input_files: input_file_spec containing information about tool inputs
+        output_files: output_file_spec containing information about tool
+                      outputs
+
+        For more information see the schema for results.json.
+        """
+        output = {}
+        for path, sources, metadata in output_files.iterate_outputs():
+            output[path] = {
+                "name": output_files.get_role(path),
+                "file_path": path,
+                "source_id": sources,
+                "taxon_id": 9606,
+                "meta_data": metadata
+            }
+        json.write(output, json_path)
+        return True
