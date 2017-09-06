@@ -1,7 +1,18 @@
 # -----------------------------------------------------------------------------
 # PyCOMPSs App
 # -----------------------------------------------------------------------------
-from pycompss.api.api import compss_wait_on
+import sys
+
+try:
+    if hasattr(sys, '_run_from_cmdl') is True:
+        raise ImportError
+    from pycompss.api.api import compss_wait_on
+except ImportError:
+    print("[Warning] Cannot import \"pycompss\" API packages.")
+    print("          Using mock decorators.")
+
+    from dummy_pycompss import compss_wait_on
+
 from basic_modules.app import App
 
 
@@ -13,9 +24,9 @@ class PyCOMPSsApp(App):
     def _post_run(self, tool_instance, output_files, output_metadata):
         """
         Adds a wait command to ensure asynchronous tasks are
-        terminated before unstaging.
+        terminated.
         """
-        output_files = compss_wait_on(output_files)
+        compss_wait_on(output_files.values())
         # Please note that the _post_run can not be done before waiting for
         # the output files.
         # The compss_wait_on performs a synchronization and retrieves the

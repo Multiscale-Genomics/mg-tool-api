@@ -1,5 +1,17 @@
-from pycompss.api.parameter import FILE_IN, FILE_OUT
-from pycompss.api.task import task
+import sys
+
+try:
+    if hasattr(sys, '_run_from_cmdl') is True:
+        raise ImportError
+    from pycompss.api.parameter import FILE_IN, FILE_OUT
+    from pycompss.api.task import task
+except ImportError:
+    print("[Warning] Cannot import \"pycompss\" API packages.")
+    print("          Using mock decorators.")
+
+    from dummy_pycompss import FILE_IN, FILE_OUT
+    from dummy_pycompss import task
+
 from basic_modules.metadata import Metadata
 from basic_modules.tool import Tool
 
@@ -38,23 +50,12 @@ class SimpleTool1(Tool):
         """
 
         # input and output share most metadata
-        output_metadata = Metadata.get_child(metadata[0])
+        output_metadata = Metadata.get_child(metadata["input"])
 
         # Run the tool
-        taskResult = self.inputPlusOne(input_files[0], output_files[0])
+        self.inputPlusOne(input_files["input"],
+                          output_files["output"])
 
-        # handle error
-        # [COMMENT] inputPlusOne is a task it will return a future object.
-        # Consequently, the following condition will never be true.
-        # Alternatively if output metadata is a parameter of the task, the
-        # task could add something to it within it's execution, and check its
-        # value when synchronized (usually done at the end of the workflow).
-        '''
-        if not taskResult:
-            output_metadata.set_exception(Exception(
-                "SimpleTool1: Could not process file {}.".format(input_file)))
-            output_file = None
-        '''
-        return (output_files, [output_metadata])
+        return {"output": output_files["output"]}, {"output": output_metadata}
 
 # -----------------------------------------------------------------------------

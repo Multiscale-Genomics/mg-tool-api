@@ -1,5 +1,17 @@
-from pycompss.api.parameter import FILE_IN, FILE_OUT
-from pycompss.api.task import task
+import sys
+
+try:
+    if hasattr(sys, '_run_from_cmdl') is True:
+        raise ImportError
+    from pycompss.api.parameter import FILE_IN, FILE_OUT
+    from pycompss.api.task import task
+except ImportError:
+    print("[Warning] Cannot import \"pycompss\" API packages.")
+    print("          Using mock decorators.")
+
+    from dummy_pycompss import FILE_IN, FILE_OUT
+    from dummy_pycompss import task
+
 from basic_modules.metadata import Metadata
 from basic_modules.tool import Tool
 
@@ -41,28 +53,13 @@ class SimpleTool2(Tool):
         """
 
         # input and output share most metadata
-        output_metadata = Metadata.get_child(metadata[0])
+        output_metadata = Metadata.get_child(metadata["input1"])
 
         # Run the tool 2
-        taskResult = self.sumTwoFiles(input_files[0],
-                                      input_files[1],
-                                      output_files[0])
+        self.sumTwoFiles(input_files["input1"],
+                         input_files["input2"],
+                         output_files["output"])
 
-        # handle error
-        # [COMMENT] sumTwoFiles is a task it will return a future object.
-        # Consequently, the following condition will never be true.
-        # Alternatively if output metadata is a parameter of the task, the
-        # task could add something to it within it's execution, and check its
-        # value when synchronized (usually done at the end of the workflow).
-        '''
-        if not taskResult:
-            print "not"
-            output_metadata.set_exception(
-                Exception(
-                    "SimpleTool2: Could not process files {},
-                    {}.".format(*input_files)))
-            output_file = None
-        '''
-        return (output_files, [output_metadata])
+        return {"output": output_files["output"]}, {"output": output_metadata}
 
 # ------------------------------------------------------------------------------
