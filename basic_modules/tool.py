@@ -42,8 +42,6 @@ class Tool(object):
 
     See also Workflow.
     """
-    input_data_type = None
-    output_data_type = None
     configuration = {}
 
     def __init__(self, configuration={}):
@@ -67,10 +65,9 @@ class Tool(object):
         functionality. Note the use of the "@task" and "@constraint"
         decorators.
         """
-        output_file = "/path/to/output_file"
-        return output_file
+        return True
 
-    def run(self, input_files, output_files, metadata=None):
+    def run(self, input_files, input_metadata, output_files):
         """
         Perform the required operations to achieve the functionality of the
         Tool. This usually involves:
@@ -94,37 +91,46 @@ class Tool(object):
 
         Parameters
         ----------
-        input_file : list
-            List of valid file names (str) locally accessible to the Tool.
-        metadata : list
-            List of Metadata instances, one for each of the input_files.
+        input_file : dict
+            a dict of absolute path names of the input data elements,
+            associated with their role;
+        input_metadata : dict
+            a dict of metadatas for each of the input data elements,
+            associated with their role;
+        output_files : dict
+            a dict of absolute path names of the output data elements,
+            associated with their role.
 
 
         Returns
         -------
-        list, list
-             1. a list of output files (str), each a valid file name locally
-                accessible to the Tool
-             2. a list of Metadata instances, one for each of the
-                output_files
+        (output_files, output_metadata)
+          output_files : dict
+              a dict of absolute path names of the output data elements created
+              by the Tool, associated with their role;
+          output_metadata : dict
+              a dict of metadatas for each of the output data elements created
+              by the Tool, associated with their role;
 
 
         Example
         -------
         >>> import Tool
         >>> tool = Tool(configuration = {})
-        >>> tool.run([<input_1>, <input_2>], [<in_data_1>, <in_data_2>])
-        ([<output_1>, <output_2>], [<out_data_1>, <out_data_2>])
+        >>> tool.run(
+        ... {"input1": <input_1>, "input2": <input_2>},
+        ... {"input1": <in_data_1>, "input2": <in_data_2>})
+        ({"output": <output_1>}, {"output": <out_data_1>})
         """
         # 0: not required
         # 1:
-        assert len(input_files) == 1
+        assert len(input_files.keys()) == 1
+        input_file = input_files["input"]
+        output_file = output_files["output"]
         # 2: not required
         # 3:
-
-        output_file = self._taskMethod(input_files[0], input_files[0] + '.out')
+        self._taskMethod(input_file, output_file)
         # 4: not required
         # 5:
-        output_format = "OUTPUT_FILE_FORMAT"
-        output_metadata = Metadata(self.output_data_type, output_format)
-        return ([output_file], [output_metadata])
+        output_metadata = Metadata(None, None)
+        return {"output": output_file}, {"output": output_metadata}

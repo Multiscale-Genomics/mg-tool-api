@@ -3,6 +3,7 @@ from datatypes import Datatypes as mug_datatypes
 from metadata import Metadata
 
 
+# TODO: remove error handling once logging is sorted out
 # -----------------------------------------------------------------------------
 # Main App Interface
 # -----------------------------------------------------------------------------
@@ -56,9 +57,15 @@ class App(object):
         ----------
         tool_class : class
             the subclass of Tool to be run;
-        input_ids : list
-            a list of unique IDs of the input data elements required by the
-            Tool;
+        input_files : dict
+            a dict of absolute path names of the input data elements required
+            by the Tool, associated with their role;
+        input_metadata : dict
+            a dict of metadatas for each of the input data elements required
+            by the Tool, associated with their role;
+        output_files : dict
+            a dict of absolute path names of the output data elements created
+            by the Tool, associated with their role;
         configuration : dict
             a dictionary containing information on how the tool should be
             executed.
@@ -66,15 +73,20 @@ class App(object):
 
         Returns
         -------
-        list
-            A list of unique IDs for the Tool's output data elements.
+        (output_files, output_metadata)
+          output_files : dict
+              a dict of absolute path names of the output data elements created
+              by the Tool, associated with their role;
+          output_metadata : dict
+              a dict of metadatas for each of the output data elements created
+              by the Tool, associated with their role;
 
 
         Example
         -------
         >>> import App, Tool
         >>> app = App()
-        >>> app.launch(Tool, [<input_id>], {})
+        >>> app.launch(Tool, {"input": <input_file>}, {})
         """
 
         print "1) Instantiate and configure Tool"
@@ -94,14 +106,14 @@ class App(object):
                                                        output_metadata)
 
         print "3) Check for errors"
-        if any(['error' in outmd for outmd in output_metadata]):
+        if any([outmd.error for key, outmd in output_metadata.items()]):
             fatal = self._error(
                 [outmd for outmd in output_metadata if outmd.error])
             if fatal:
                 return None
 
         print "Output_files: ", output_files
-        return output_files
+        return output_files, output_metadata
 
     def _instantiate_tool(self, tool_class, configuration):
         """
