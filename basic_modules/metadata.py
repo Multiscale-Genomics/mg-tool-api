@@ -8,7 +8,7 @@ class Metadata(object):
     """
     Object containing all information pertaining to a specific data element.
     """
-    def __init__(self, data_type, file_type,
+    def __init__(self, data_type, file_type, file_path=None,
                  source_id=None, meta_data=None, data_id=None):
         """
         Initialise the Metadata; for more information see the documentation for
@@ -23,6 +23,8 @@ class Metadata(object):
             The type of information in the file
         file_type : str
             File format
+        file_path : str
+            Relative path of the file
         source_id : list
             List of IDs of files that were processed to generate this file
         meta_data : dict
@@ -33,6 +35,7 @@ class Metadata(object):
         """
         self.data_type = data_type
         self.file_type = file_type
+        self.file_path = file_path
         self.source_id = source_id
         self.meta_data = meta_data
         self.id = data_id
@@ -43,6 +46,7 @@ class Metadata(object):
         return """<Metadata: ({md.id})
             data_type: {md.data_type}
             file_type: {md.file_type}
+            file_path: {md.file_path}
             source_id: {md.source_id}
             meta_data: {md.meta_data}>""".format(md=self)
 
@@ -102,5 +106,6 @@ class Metadata(object):
 
         return cls(parents[0].data_type,
                    parents[0].file_type,
+                   parents[0].file_path,
                    source_id=[parent.id for parent in parents],
                    meta_data=meta_data)
