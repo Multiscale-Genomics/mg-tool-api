@@ -43,8 +43,6 @@ class SimpleWorkflow(Workflow):
           result
     """
 
-    input_data_type = ["number file", "number file"]
-    output_data_type = "number file"
     configuration = {}
 
     def __init__(self, configuration={}):
@@ -60,31 +58,40 @@ class SimpleWorkflow(Workflow):
         """
         self.configuration.update(configuration)
 
-    def run(self, input_files, metadata, output_files):
+    def run(self, input_files, input_metadata, output_files):
 
         print "\t0. perform checks"
-        assert len(input_files) == 2
-        assert len(metadata) == 2
-        input1, input2 = input_files
-        inmd1, inmd2 = metadata
-        output = output_files[0]
+        assert len(input_files.keys()) == 2
+        assert len(input_metadata.keys()) == 2
+        input1 = input_files["number1"]
+        input2 = input_files["number2"]
+        inmd1 = input_metadata["number1"]
+        inmd2 = input_metadata["number2"]
+        output = output_files["output"]
 
         print "\t1.a Instantiate Tool 1 and run"
         simpleTool1 = SimpleTool1(self.configuration)
-        output1, outmd1 = simpleTool1.run([input1], [inmd1], [input1 + '.out'])
+        output1, outmd1 = simpleTool1.run(
+            {"input": input1},
+            {"input": inmd1},
+            {"output": input1 + '.out'})
 
         print "\t1.b (Instantiate Tool) and run"
-        output2, outmd2 = simpleTool1.run([input2], [inmd2], [input2 + '.out'])
+        output2, outmd2 = simpleTool1.run(
+            {"input": input2},
+            {"input": inmd2},
+            {"output": input2 + '.out'})
 
         print "\t2. Instantiate Tool and run"
         simpleTool2 = SimpleTool2(self.configuration)
-        output3, outmd3 = simpleTool2.run([output1[0], output2[0]],
-                                          [outmd1[0], outmd2[0]],
-                                          [output])
+        output3, outmd3 = simpleTool2.run(
+            {"input1": output1["output"], "input2": output2["output"]},
+            {"input1": outmd1["output"], "input2": outmd2["output"]},
+            {"output": output})
 
         print "\t4. Optionally edit the output metadata"
         print "\t5. Return"
-        return (output3, outmd3)
+        return output3, outmd3
 
 
 # -----------------------------------------------------------------------------
@@ -97,8 +104,6 @@ def main(inputFiles, inputMetadata, outputFiles):
     This function launches the app.
     """
 
-    # import pprint  # Pretty print - module for dictionary fancy printing
-
     # 1. Instantiate and launch the App
     print "1. Instantiate and launch the App"
     from apps.workflowapp import WorkflowApp
@@ -110,6 +115,27 @@ def main(inputFiles, inputMetadata, outputFiles):
     print "2. Execution finished"
 
 
+def main_json():
+    """
+    Alternative main function
+    -------------
+
+    This function launches the app using configuration written in
+    two json files: config.json and input_metadata.json.
+    """
+    # 1. Instantiate and launch the App
+    print "1. Instantiate and launch the App"
+    from apps.jsonapp import JSONApp
+    app = JSONApp()
+    result = app.launch(SimpleWorkflow,
+                        "/tmp/",
+                        "tools_demos/config.json",
+                        "tools_demos/input_metadata.json")
+
+    # 2. The App has finished
+    print "2. Execution finished; see /tmp/results.json"
+    
+
 if __name__ == "__main__":
     # Note that the code that was within this if condition has been moved
     # to a function called 'main'.
@@ -117,7 +143,6 @@ if __name__ == "__main__":
 
     inputFile1 = "file1"
     inputFile2 = "file2"
-    metadataFile = "metadataFile"
     outputFile = "outputFile"
 
     # The VRE has to prepare the data to be processed.
@@ -136,5 +161,7 @@ if __name__ == "__main__":
     inputMetadataF1 = Metadata("Number", "plainText")
     inputMetadataF2 = Metadata("Number", "plainText")
 
-    main([inputFile1, inputFile2], [inputMetadataF1, inputMetadataF2],
-         [outputFile])
+    # main([inputFile1, inputFile2], [inputMetadataF1, inputMetadataF2],
+    #      [outputFile])
+
+    main_json()

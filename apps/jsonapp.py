@@ -82,9 +82,10 @@ class JSONApp(WorkflowApp):
         print "4) Pack information to JSON"
         return self._write_json(
             input_files, input_metadata,
-            output_files, output_metadata, "results.json")
+            output_files, output_metadata,
+            os.path.join(root_dir, "results.json"))
 
-    def make_absolute_path(files, root):
+    def make_absolute_path(self, files, root):
         """Make paths absolute."""
         for role, path in files.items():
             files[role] = os.path.join(root, path)
@@ -106,7 +107,7 @@ class JSONApp(WorkflowApp):
 
         output_files = {}
         for output_file in configuration["output_files"]:
-            output_files[output_file["name"]] = output_file["file_path"]
+            output_files[output_file["name"]] = output_file["file"]["file_path"]
 
         arguments = {}
         for argument in configuration["arguments"]:
@@ -125,7 +126,13 @@ class JSONApp(WorkflowApp):
         metadata = json.load(file(json_path))
         input_metadata = {}
         for input_file in metadata:
-            input_metadata[input_file["_id"]] = input_file
+            input_metadata[input_file["_id"]] = Metadata(
+                data_type=input_file["data_type"],
+                file_type=input_file["file_type"],
+                file_path=input_file["file_path"],
+                source_id=input_file["source_id"],
+                meta_data=input_file["meta_data"],
+                data_id=input_file["_id"])
         return input_metadata
 
     def _write_json(self,
@@ -145,7 +152,10 @@ class JSONApp(WorkflowApp):
             results.append({
                 "name": role,
                 "file_path": path,
-                "meta_data": output_metadata[role]
+                "data_type": output_metadata[role].data_type,
+                "file_type": output_metadata[role].file_type,
+                "source_id": output_metadata[role].source_id,
+                "meta_data": output_metadata[role].meta_data
             })
-        json.write({"output_files": results}, file(json_path, 'w'))
+        json.dump({"output_files": results}, file(json_path, 'w'))
         return True
