@@ -149,13 +149,23 @@ class JSONApp(WorkflowApp):
         """
         metadata = json.load(file(json_path))
         input_metadata = {}
+        input_source_ids = {}
         for input_file in metadata:
-            input_metadata[input_file["_id"]] = Metadata(
+            ID = input_file["_id"]
+            input_metadata[ID] = Metadata(
                 data_type=input_file["data_type"],
                 file_type=input_file["file_type"],
                 file_path=input_file["file_path"],
-                sources=input_file["sources"],
                 meta_data=input_file["meta_data"])
+            # Keep track of source_ids
+            input_source_ids[ID] = input_file["source_id"]
+
+        # Convert IDs to paths where available
+        for ID, source_ids in input_source_ids.iteritems():
+            input_metadata[ID].sources = [
+                input_metadata[sID].file_path for sID in source_ids
+                if sID in input_metadata]
+
         return input_metadata
 
     def _write_json(self,
