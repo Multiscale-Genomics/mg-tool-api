@@ -65,7 +65,7 @@ class Metadata(object):
         return True
 
     @classmethod
-    def get_child(cls, parents):
+    def get_child(cls, path, parents):
         """
         Generate a stub for the metadata of a new data element generated
         from the data element described in the specified parents.
@@ -96,7 +96,7 @@ class Metadata(object):
         >>> metadata1 = Metadata(...)
         >>> metadata2 = Metadata(...)
         >>> child_metadata =
-        >>> 	Metadata.get_child([metadata1, metadata2])
+        >>> 	Metadata.get_child([metadata1, metadata2], 'child_file')
         """
         if type(parents) not in [list, tuple]:
             parents = (parents,)
@@ -105,6 +105,6 @@ class Metadata(object):
 
         return cls(parents[0].data_type,
                    parents[0].file_type,
-                   parents[0].file_path,
+                   path,
                    sources=[parent.file_path for parent in parents],
                    meta_data=meta_data)
