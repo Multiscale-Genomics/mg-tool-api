@@ -65,12 +65,18 @@ class JSONApp(WorkflowApp):
         # arrange by role
         input_metadata = {}
         for role, ID in input_IDs.items():
-            input_metadata[role] = input_metadata_IDs[ID]
+            if isinstance(ID, (list, tuple)):  # check allow_multiple?
+                input_metadata[role] = [input_metadata_IDs[el] for el in ID]
+            else:
+                input_metadata[role] = input_metadata_IDs[ID]
 
         # get paths from IDs
         input_files = {}
         for role, metadata in input_metadata.items():
-            input_files[role] = metadata.file_path
+            if isinstance(metadata, (list, tuple)):  # check allow_multiple?
+                input_files[role] = [el.file_path for el in metadata]
+            else:
+                input_files[role] = metadata.file_path
 
         input_files = self.make_absolute_path(input_files, root_dir)
 
@@ -88,7 +94,10 @@ class JSONApp(WorkflowApp):
     def make_absolute_path(self, files, root):
         """Make paths absolute."""
         for role, path in files.items():
-            files[role] = os.path.join(root, path)
+            if isinstance(path, (list, tuple)):
+                files[role] = [os.path.join(root, el) for el in path]
+            else:
+                files[role] = os.path.join(root, path)
         return files
 
     def _read_config(self, json_path):
@@ -98,12 +107,27 @@ class JSONApp(WorkflowApp):
         arguments: dict containing tool arguments
         output_files: dict containing absolute paths of tool outputs
 
+        Note that values of input_IDs may be either str or list,
+        according to whether "allow_multiple" is True for the role;
+        in which case, the VRE will have accepted multiple input files
+        for that role.
+
+        For output files with "allow_multiple" True nothing changes
+        here: it is up to the Tool developer to handle this.
+
         For more information see the schema for config.json.
         """
         configuration = json.load(file(json_path))
         input_IDs = {}
         for input_ID in configuration["input_files"]:
-            input_IDs[input_ID["name"]] = input_ID["value"]
+            role = input_ID["name"]
+            ID = input_ID["value"]
+            if role in input_IDs:
+                if not isinstance(input_IDs[role], list):
+                    input_IDs[role] = [input_IDs[role]]
+                input_IDs[role].append(ID)
+            else:
+                input_IDs[role] = ID
 
         output_files = {}
         for output_file in configuration["output_files"]:
@@ -130,9 +154,8 @@ class JSONApp(WorkflowApp):
                 data_type=input_file["data_type"],
                 file_type=input_file["file_type"],
                 file_path=input_file["file_path"],
-                source_id=input_file["source_id"],
-                meta_data=input_file["meta_data"],
-                data_id=input_file["_id"])
+                sources=input_file["sources"],
+                meta_data=input_file["meta_data"])
         return input_metadata
 
     def _write_json(self,
@@ -145,17 +168,46 @@ class JSONApp(WorkflowApp):
         output_files: dict containing absolute paths of output files
         output_metadata: dict containing metadata on output files
 
+        Note that values of output_files may be either str or list,
+        according to whether "allow_multiple" is True for the role;
+        in which case, the Tool may have generated multiple output 
+        files for that role.
+
+        Values of output_metadata for roles for which "allow_multiple"
+        is True can be either a list of instances of Metadata, or a
+        single instance. In the former case, the list is assumed to be
+        the same length as that in output_files. In the latter, the same
+        instance of Metadata is used for all outputs for that role.
+
         For more information see the schema for results.json.
         """
         results = []
-        for role, path in output_files.items():
-            results.append({
+        def _newresult(role, path, metadata):
+            return {
                 "name": role,
                 "file_path": path,
-                "data_type": output_metadata[role].data_type,
-                "file_type": output_metadata[role].file_type,
-                "source_id": output_metadata[role].source_id,
-                "meta_data": output_metadata[role].meta_data
-            })
+                "data_type": metadata.data_type,
+                "file_type": metadata.file_type,
+                "sources": metadata.sources,
+                "meta_data": metadata.meta_data
+            }
+
+        for role, path in output_files.items():
+            metadata = output_metadata[role]
+            if isinstance(path, (list, tuple)):  # check allow_multiple?
+                assert (isinstance(metadata, (list, tuple)) and \
+                        len(metadata) == len(path)) or \
+                        isinstance(metadata, Metadata), \
+                        """Wrong number of metadata entries for role {role}:
+either 1 or {np}, not {nm}""".format(role=role, np=len(path), nm=len(metdata))
+
+                if not isinstance(metadata, (list, tuple)):
+                    metadata = [metadata] * len(path)
+
+                results.extend(
+                    [_newresult(role, pa, md) for pa, md in zip(path, metadata)])
+            else:
+                results.append(
+                    _newresult(role, path, metadata))
         json.dump({"output_files": results}, file(json_path, 'w'))
         return True
