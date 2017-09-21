@@ -106,11 +106,14 @@ class App(object):
                                                        output_metadata)
 
         print "3) Check for errors"
-        if any([outmd.error for key, outmd in output_metadata.items()]):
-            fatal = self._error(
-                [outmd for outmd in output_metadata if outmd.error])
-            if fatal:
-                return None
+        for key, outmd in output_metadata.items():
+            if not isinstance(outmd, (list, tuple)):
+                outmd = [outmd]
+            if any([md.error for md in outmd]):
+                fatal = self._error(
+                    [md for md in outmd if md.error])
+                if fatal:
+                    return None
 
         print "Output_files: ", output_files
         return output_files, output_metadata
