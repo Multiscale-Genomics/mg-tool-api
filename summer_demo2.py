@@ -3,23 +3,28 @@ Simple example of Workflow using PyCOMPSs, called using an App.
 
 - SimpleTool1:
   reads an integer from a file, increments it, and writes it to file
-- SimpleTool2:
-  reads two integers from two file and writes their sum to file
+- SimpleTool3:
+  reads N integers from N files and cumulatively sums them, writing
+  each intermediate result to file; for example, if 4 files are input
+  (A, B, C, D), then 3 files are output: O1 = A+B, O2 = O1+C, O3 = O2+D.
 - SimpleWorkflow:
   implements the following workflow:
 
-      1           2
-      |			  |
- SimpleTool1  SimpleTool1
-      |			  |
-      +-----.-----+
-            |
-       SimpleTool2
-            |
-            3
+      1           2            3           ...
+      |           |            |            |
+ SimpleTool1  SimpleTool1  SimpleTool1  SimpleTool1
+      |           |            |            |
+      +-----------+------.-----+------------+
+                         |
+                    SimpleTool3
+                         |
+             +-----------+-----------+
+             |           |           |
+             4           5          ...
 
-  Where 1 and 2 are inputs, 3 is the output, Tool1 and Tool2 are the
-  SimpleTool1 and SimpleTool2 defined above.
+  Where 1, 2, 3, ... are a variable number of inputs; 4, 5, ... are
+  a variable number of outputs, and SimpleTool1 and SimpleTool3 are
+  defined above.
 
   The "main()" uses the WorkflowApp to launch SimpleWorkflow in order to
   unstage intermediate outputs.
@@ -33,15 +38,17 @@ from utils import remap
 
 class SimpleWorkflow(Workflow):
     """
-    input1		input2
-      |			  |
-    Tool1		 Tool1
-      |			  |
-      +-----.-----+
-            |
-          Tool2
-            |
-          result
+      1           2            3           ...
+      |           |            |            |
+ SimpleTool1  SimpleTool1  SimpleTool1  SimpleTool1
+      |           |            |            |
+      +-----------+------.-----+------------+
+                         |
+                    SimpleTool3
+                         |
+             +-----------+-----------+
+             |           |           |
+             4           5          ...
     """
 
     configuration = {}
@@ -60,16 +67,20 @@ class SimpleWorkflow(Workflow):
         self.configuration.update(configuration)
 
     def run(self, input_files, input_metadata, output_files):
-        print input_files, input_metadata, output_files
+
         print "\t0. perform checks"
         assert len(input_files.keys()) == 1
         assert len(input_metadata.keys()) == 1
         assert len(input_files["number"]) == len(input_metadata["number"])
-        
+
+        # Prepare lists to collect outputs of first step
         outputs = []
         out_mds = []
+
+        # Run through inputs and apply SimpleTool1 to each
         print "\t1.a Instantiate Tool1"
         simpleTool1 = SimpleTool1(self.configuration)
+
         for i, path in enumerate(input_files["number"]):
             metadata = input_metadata["number"][i]
             print "\t1.b run %d"%i
@@ -81,6 +92,7 @@ class SimpleWorkflow(Workflow):
             out_mds.append(outmd["output"])
 
         print "\t2. Instantiate Tool and run"
+        # Apply SimpleTool3 to all outputs of first step
         simpleTool3 = SimpleTool3(self.configuration)
         output3, outmd3 = simpleTool3.run(
             {"input": outputs},

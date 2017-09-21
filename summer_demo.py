@@ -9,9 +9,9 @@ Simple example of Workflow using PyCOMPSs, called using an App.
   implements the following workflow:
 
       1           2
-      |			  |
+      |           |
  SimpleTool1  SimpleTool1
-      |			  |
+      |           |
       +-----.-----+
             |
        SimpleTool2
@@ -63,31 +63,33 @@ class SimpleWorkflow(Workflow):
         print "\t0. perform checks"
         assert len(input_files.keys()) == 2
         assert len(input_metadata.keys()) == 2
-        input1 = input_files["number1"]
-        input2 = input_files["number2"]
-        inmd1 = input_metadata["number1"]
-        inmd2 = input_metadata["number2"]
         output = output_files["output"]
 
         print "\t1.a Instantiate Tool 1 and run"
         simpleTool1 = SimpleTool1(self.configuration)
         output1, outmd1 = simpleTool1.run(
-            {"input": input1},
-            {"input": inmd1},
-            {"output": input1 + '.out'})
+            # Use remap to convert role "number1" to "input" for simpleTool1
+            remap(input_files, input="number1"),
+            remap(input_metadata, input="number1"),
+            # Use a temporary file name for intermediate outputs
+            {"output": 'file1.out'})
 
         print "\t1.b (Instantiate Tool) and run"
         output2, outmd2 = simpleTool1.run(
-            {"input": input2},
-            {"input": inmd2},
-            {"output": input2 + '.out'})
+            # Use remap to convert role "number2" to "input" for simpleTool1
+            remap(input_files, input="number2"),
+            remap(input_metadata, input="number2"),
+            # Use a temporary file name for intermediate outputs
+            {"output": 'file2.out'})
 
         print "\t2. Instantiate Tool and run"
         simpleTool2 = SimpleTool2(self.configuration)
         output3, outmd3 = simpleTool2.run(
+            # Instead of using remap, here we re-build dicts to convert input roles
             {"input1": output1["output"], "input2": output2["output"]},
             {"input1": outmd1["output"], "input2": outmd2["output"]},
-            {"output": output})
+            # Workflow output files are from this Tool
+            output_files)
 
         print "\t4. Optionally edit the output metadata"
         print "\t5. Return"
