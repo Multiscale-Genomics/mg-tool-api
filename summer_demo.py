@@ -141,9 +141,9 @@ if __name__ == "__main__":
     # to a function called 'main'.
     # The reason for this change is to improve performance.
 
-    inputFile1 = "file1"
-    inputFile2 = "file2"
-    outputFile = "outputFile"
+    inputFile1 = "/tmp/file1"
+    inputFile2 = "/tmp/file2"
+    outputFile = "/tmp/outputFile"
 
     # The VRE has to prepare the data to be processed.
     # In this example we create 2 files for testing purposes.
@@ -161,7 +161,10 @@ if __name__ == "__main__":
     inputMetadataF1 = Metadata("Number", "plainText")
     inputMetadataF2 = Metadata("Number", "plainText")
 
-    # main([inputFile1, inputFile2], [inputMetadataF1, inputMetadataF2],
-    #      [outputFile])
+    main({"number1": inputFile1,
+          "number2": inputFile2},
+         {"number1": inputMetadataF1,
+          "number2": inputMetadataF2},
+         {"output": outputFile})
 
     main_json()
