@@ -53,7 +53,8 @@ class SimpleTool2(Tool):
         """
 
         # input and output share most metadata
-        output_metadata = Metadata.get_child(metadata["input1"])
+        output_metadata = Metadata.get_child(
+            metadata["input1"], output_files["output"])
 
         # Run the tool 2
         self.sumTwoFiles(input_files["input1"],

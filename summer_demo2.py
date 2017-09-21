@@ -83,7 +83,7 @@ class SimpleWorkflow(Workflow):
 
         for i, path in enumerate(input_files["number"]):
             metadata = input_metadata["number"][i]
-            print "\t1.b run %d"%i
+            print "\t1.b run {}".format(i)
             output, outmd = simpleTool1.run(
                 {"input": path},
                 {"input": metadata},
@@ -151,7 +151,7 @@ if __name__ == "__main__":
     inputFile1 = "/tmp/file1"
     inputFile2 = "/tmp/file2"
     inputFile3 = "/tmp/file3"
-    outputFile = "/tmp/outputFile%d"  # allow_multiple = True
+    outputFile = "/tmp/outputFile{}"  # allow_multiple = True
 
     # The VRE has to prepare the data to be processed.
     # In this example we create 2 files for testing purposes.

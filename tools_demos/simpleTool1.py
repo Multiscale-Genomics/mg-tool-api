@@ -50,7 +50,8 @@ class SimpleTool1(Tool):
         """
 
         # input and output share most metadata
-        output_metadata = Metadata.get_child(metadata["input"])
+        output_metadata = Metadata.get_child(
+            metadata["input"], output_files["output"])
 
         # Run the tool
         self.inputPlusOne(input_files["input"],

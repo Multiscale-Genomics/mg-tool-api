@@ -39,7 +39,6 @@ class SimpleTool3(Tool):
         try:
             with open(file1, 'r+') as f:
                 result += int(f.read())
-                print result
             with open(file2, 'r+') as f:
                 result += int(f.read())
             with open(file3, 'w') as f:
@@ -62,20 +61,25 @@ class SimpleTool3(Tool):
         output_metadata = {}
         output_metadata["output"] = []
         
-        # Iteratively run the tool 3
+        # Iteratively run the task
         previous_input = input_files["input"][0]
         previous_metadata = metadata["input"][0]
         
         for i in range(len(input_files["input"]) - 1):
+            # Add next input file:
             next_input = input_files["input"][i+1]
             next_metadata = metadata["input"][i+1]
-            file_out = output_pattern%i
+            # Pre-calculate output path and metadata
+            file_out = output_pattern.format(i)
             metadata_out = Metadata.get_child(
-                (previous_metadata, next_metadata))
+                (previous_metadata, next_metadata), file_out)
+
+            # run task
             success = self.sumTwoFiles(previous_input,
                                        next_input,
                                        file_out)
             if success:
+                # keep track of successful iterations
                 output_files["output"].append(file_out)
                 # input and outputs share most metadata
                 output_metadata["output"].append(metadata_out)
