@@ -60,7 +60,7 @@ class SimpleWorkflow(Workflow):
         self.configuration.update(configuration)
 
     def run(self, input_files, input_metadata, output_files):
-
+        print input_files, input_metadata, output_files
         print "\t0. perform checks"
         assert len(input_files.keys()) == 1
         assert len(input_metadata.keys()) == 1
@@ -127,8 +127,8 @@ def main_json():
     app = JSONApp()
     result = app.launch(SimpleWorkflow,
                         "/tmp/",
-                        "tools_demos/config.json",
-                        "tools_demos/input_metadata.json")
+                        "tools_demos/config2.json",
+                        "tools_demos/input_metadata2.json")
 
     # 2. The App has finished
     print "2. Execution finished; see /tmp/results.json"
@@ -136,9 +136,10 @@ def main_json():
 
 if __name__ == "__main__":
 
-    inputFile1 = "file1"
-    inputFile2 = "file2"
-    outputFile = "outputFile%d"  # allow_multiple = True
+    inputFile1 = "/tmp/file1"
+    inputFile2 = "/tmp/file2"
+    inputFile3 = "/tmp/file3"
+    outputFile = "/tmp/outputFile%d"  # allow_multiple = True
 
     # The VRE has to prepare the data to be processed.
     # In this example we create 2 files for testing purposes.
@@ -147,6 +148,8 @@ if __name__ == "__main__":
         f.write("5")
     with open(inputFile2, "w") as f:
         f.write("9")
+    with open(inputFile3, "w") as f:
+        f.write("13")
     print "\t* Files successfully created"
 
     # Read metadata file and build a dictionary with the metadata:
@@ -155,13 +158,10 @@ if __name__ == "__main__":
     # when building the Metadata objects.
     inputMetadataF1 = Metadata("Number", "plainText")
     inputMetadataF2 = Metadata("Number", "plainText")
+    inputMetadataF3 = Metadata("Number", "plainText")
 
-    main({"number": [inputFile1, inputFile2]},
-         {"number": [inputMetadataF1, inputMetadataF2]},
+    main({"number": [inputFile1, inputFile2, inputFile3]},
+         {"number": [inputMetadataF1, inputMetadataF2, inputMetadataF3]},
          {"output": outputFile})
 
-    main({"number": [inputFile1, inputFile2]},
-         {"number": inputMetadataF1},
-         {"output": outputFile})
-
-    # main_json()
+    main_json()
