@@ -65,7 +65,7 @@ class Metadata(object):
         return True
 
     @classmethod
-    def get_child(cls, path, parents):
+    def get_child(cls, parents, path):
         """
         Generate a stub for the metadata of a new data element generated
         from the data element described in the specified parents.
