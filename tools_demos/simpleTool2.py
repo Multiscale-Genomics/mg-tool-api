@@ -60,6 +60,6 @@ class SimpleTool2(Tool):
                          input_files["input2"],
                          output_files["output"])
 
-        return {"output": output_files["output"]}, {"output": output_metadata}
+        return output_files, {"output": output_metadata}
 
 # ------------------------------------------------------------------------------
