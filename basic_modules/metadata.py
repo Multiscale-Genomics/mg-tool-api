@@ -32,7 +32,11 @@ class Metadata(object):
         self.data_type = data_type
         self.file_type = file_type
         self.file_path = file_path
+        if sources is None:
+            sources = []
         self.sources = sources
+        if meta_data is None:
+            meta_data = {}
         self.meta_data = meta_data
         self.exception = None
         self.error = False
