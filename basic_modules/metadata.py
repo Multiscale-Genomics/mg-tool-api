@@ -9,12 +9,10 @@ class Metadata(object):
     Object containing all information pertaining to a specific data element.
     """
     def __init__(self, data_type, file_type, file_path=None,
-                 source_id=None, meta_data=None, data_id=None):
+                 sources=None, meta_data=None):
         """
         Initialise the Metadata; for more information see the documentation for
-        the MuG DMP API. The "data_id" parameter should only be specified when
-        the Metadata instance refers to an existing element in the DMP
-        database.
+        the MuG DMP API. 
 
 
         Parameters
@@ -25,29 +23,26 @@ class Metadata(object):
             File format
         file_path : str
             Relative path of the file
-        source_id : list
-            List of IDs of files that were processed to generate this file
+        sources : list
+            List of paths of files that were processed to generate this file
         meta_data : dict
             Dictionary object containing the extra data related to the
             generation of the file or describing the way it was processed
-        data_id : str
-            ID of the corresponding file in the DMP database
         """
         self.data_type = data_type
         self.file_type = file_type
         self.file_path = file_path
-        self.source_id = source_id
+        self.sources = sources
         self.meta_data = meta_data
-        self.id = data_id
         self.exception = None
         self.error = False
 
     def __repr__(self):
-        return """<Metadata: ({md.id})
+        return """<Metadata:
             data_type: {md.data_type}
             file_type: {md.file_type}
             file_path: {md.file_path}
-            source_id: {md.source_id}
+            sources: {md.sources}
             meta_data: {md.meta_data}>""".format(md=self)
 
     def set_exception(self, exception):
@@ -107,5 +102,5 @@ class Metadata(object):
         return cls(parents[0].data_type,
                    parents[0].file_type,
                    parents[0].file_path,
-                   source_id=[parent.id for parent in parents],
+                   sources=[parent.file_path for parent in parents],
                    meta_data=meta_data)
