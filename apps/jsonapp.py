@@ -12,12 +12,12 @@ class JSONApp(WorkflowApp):
 
     Redefines launch to the following signature (see launch for details)
 
-    launch(tool_class, config_json_path, input_metadata_json_path, output_metadata_json_path)
+    launch(tool_class, config_path, input_metadata_path, output_metadata_path)
 
     """
 
     def launch(self, tool_class,
-               config_json_path, input_metadata_json_path, output_metadata_json_path):
+               config_path, input_metadata_path, output_metadata_path):
         """
         Run a Tool with the specified inputs and configuration.
 
@@ -26,14 +26,14 @@ class JSONApp(WorkflowApp):
         ----------
         tool_class : class
             the subclass of Tool to be run;
-        config_json_path : str
+        config_path : str
             path to a valid JSON file containing information on how the tool
             should be executed. The schema for this JSON string is the
             "config.json".
-        input_metadata_json_path : str
+        input_metadata_path : str
             path to a valid JSON file containing information on tool inputs.
             The schema for this JSON string is the "input_metadata.json".
-        output_metadata_json_path : str
+        output_metadata_path : str
             path to write the JSON file containing information on tool outputs.
             The schema for this JSON string is the "output_metadata.json".
 
@@ -54,10 +54,10 @@ class JSONApp(WorkflowApp):
 
         print "0) Unpack information from JSON"
         input_IDs, arguments, output_files = self._read_config(
-            config_json_path)
+            config_path)
 
         input_metadata_IDs = self._read_metadata(
-            input_metadata_json_path)
+            input_metadata_path)
 
         # arrange by role
         input_metadata = {}
@@ -81,10 +81,10 @@ class JSONApp(WorkflowApp):
             output_files, arguments)
 
         print "4) Pack information to JSON"
-        return self._write_json(
+        return self._write_results(
             input_files, input_metadata,
             output_files, output_metadata,
-            output_metadata_json_path)
+            output_metadata_path)
 
     def _read_config(self, json_path):
         """
@@ -154,9 +154,9 @@ class JSONApp(WorkflowApp):
 
         return input_metadata
 
-    def _write_json(self,
-                    input_files, input_metadata,
-                    output_files, output_metadata, json_path):
+    def _write_results(self,
+                       input_files, input_metadata,
+                       output_files, output_metadata, json_path):
         """
         Write results.json using information from input_files and output_files:
         input_files: dict containing absolute paths of input files
