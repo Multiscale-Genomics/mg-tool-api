@@ -4,7 +4,6 @@
 from apps.workflowapp import WorkflowApp
 from basic_modules.metadata import Metadata
 import json
-import os
 
 
 class JSONApp(WorkflowApp):
@@ -13,11 +12,11 @@ class JSONApp(WorkflowApp):
 
     Redefines launch to the following signature (see launch for details)
 
-    launch(tool_class, config_json_path, input_metadata_json_path, root_dir)
+    launch(tool_class, config_json_path, input_metadata_json_path)
 
     """
 
-    def launch(self, tool_class, root_dir,
+    def launch(self, tool_class,
                config_json_path, input_metadata_json_path):
         """
         Run a Tool with the specified inputs and configuration.
@@ -27,9 +26,6 @@ class JSONApp(WorkflowApp):
         ----------
         tool_class : class
             the subclass of Tool to be run;
-        root_dir : str
-            The root directory where the Tool is expected to find input files
-            and write outputs.
         config_json_path : str
             path to a valid JSON file containing information on how the tool
             should be executed. The schema for this JSON string is the
@@ -49,15 +45,13 @@ class JSONApp(WorkflowApp):
         >>> import App, Tool
         >>> app = JSONApp()
         >>> # expects to find valid config.json
-        >>> app.launch(Tool, "/path/to/folder", "config.json", "input_metadata.json")
+        >>> app.launch(Tool, "config.json", "input_metadata.json")
         >>> # writes results.json
         """
 
         print "0) Unpack information from JSON"
         input_IDs, arguments, output_files = self._read_config(
             config_json_path)
-
-        output_files = self.make_absolute_path(output_files, root_dir)
 
         input_metadata_IDs = self._read_metadata(
             input_metadata_json_path)
@@ -78,8 +72,6 @@ class JSONApp(WorkflowApp):
             else:
                 input_files[role] = metadata.file_path
 
-        input_files = self.make_absolute_path(input_files, root_dir)
-
         # Run launch from the superclass
         output_files, output_metadata = super(JSONApp, self).launch(
             self, tool_class, input_files, input_metadata,
@@ -89,16 +81,7 @@ class JSONApp(WorkflowApp):
         return self._write_json(
             input_files, input_metadata,
             output_files, output_metadata,
-            os.path.join(root_dir, "results.json"))
-
-    def make_absolute_path(self, files, root):
-        """Make paths absolute."""
-        for role, path in files.items():
-            if isinstance(path, (list, tuple)):
-                files[role] = [os.path.join(root, el) for el in path]
-            else:
-                files[role] = os.path.join(root, path)
-        return files
+            "results.json")
 
     def _read_config(self, json_path):
         """
