@@ -12,11 +12,4 @@ class WorkflowApp(PyCOMPSsApp, LocalApp):
 
     Inherits from the LocalApp (see LocalApp) and the PyCOMPSsApp.
     """
-
-    def _post_run(self, tool_instance, output_files, output_metadata):
-        """
-        Also unstage intermediate files.
-        """
-        output_files, output_metadata = super(WorkflowApp, self)._post_run(
-            tool_instance, output_files, output_metadata)
-        return output_files, output_metadata
+    pass
