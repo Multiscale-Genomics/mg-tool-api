@@ -12,12 +12,12 @@ class JSONApp(WorkflowApp):
 
     Redefines launch to the following signature (see launch for details)
 
-    launch(tool_class, config_json_path, input_metadata_json_path)
+    launch(tool_class, config_json_path, input_metadata_json_path, output_metadata_json_path)
 
     """
 
     def launch(self, tool_class,
-               config_json_path, input_metadata_json_path):
+               config_json_path, input_metadata_json_path, output_metadata_json_path):
         """
         Run a Tool with the specified inputs and configuration.
 
@@ -33,6 +33,9 @@ class JSONApp(WorkflowApp):
         input_metadata_json_path : str
             path to a valid JSON file containing information on tool inputs.
             The schema for this JSON string is the "input_metadata.json".
+        output_metadata_json_path : str
+            path to write the JSON file containing information on tool outputs.
+            The schema for this JSON string is the "output_metadata.json".
 
 
         Returns
@@ -44,9 +47,9 @@ class JSONApp(WorkflowApp):
         -------
         >>> import App, Tool
         >>> app = JSONApp()
-        >>> # expects to find valid config.json
-        >>> app.launch(Tool, "config.json", "input_metadata.json")
-        >>> # writes results.json
+        >>> # expects to find valid config.json and input_metadata.json
+        >>> app.launch(Tool, "/path/to/config.json", "/path/to/input_metadata.json", "/path/to/results.json")
+        >>> # writes /path/to/results.json
         """
 
         print "0) Unpack information from JSON"
@@ -81,7 +84,7 @@ class JSONApp(WorkflowApp):
         return self._write_json(
             input_files, input_metadata,
             output_files, output_metadata,
-            "results.json")
+            output_metadata_json_path)
 
     def _read_config(self, json_path):
         """
