@@ -81,7 +81,7 @@ class JSONApp(WorkflowApp):
         input_files = self.make_absolute_path(input_files, root_dir)
 
         # Run launch from the superclass
-        output_files, output_metadata = WorkflowApp.launch(
+        output_files, output_metadata = super(JSONApp, self).launch(
             self, tool_class, input_files, input_metadata,
             output_files, arguments)
 
