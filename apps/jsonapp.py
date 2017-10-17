@@ -77,7 +77,7 @@ class JSONApp(WorkflowApp):
 
         # Run launch from the superclass
         output_files, output_metadata = super(JSONApp, self).launch(
-            self, tool_class, input_files, input_metadata,
+            tool_class, input_files, input_metadata,
             output_files, arguments)
 
         print "4) Pack information to JSON"
@@ -166,7 +166,7 @@ class JSONApp(WorkflowApp):
 
         Note that values of output_files may be either str or list,
         according to whether "allow_multiple" is True for the role;
-        in which case, the Tool may have generated multiple output 
+        in which case, the Tool may have generated multiple output
         files for that role.
 
         Values of output_metadata for roles for which "allow_multiple"
