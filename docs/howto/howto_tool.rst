@@ -22,6 +22,11 @@ This is a test tool that takes an input file, writes some text to it and then re
 .. code-block:: python
    :linenos:
 
+   """
+   .. License and copyright agreement statement
+   """
+   from __future__ import print_function
+
    try:
        from pycompss.api.parameter import FILE_INOUT
        from pycompss.api.task import task
@@ -35,6 +40,7 @@ This is a test tool that takes an input file, writes some text to it and then re
        from dummy_pycompss import compss_wait_on
 
    from basic_modules.tool import Tool
+   from basic_modules.metadata import Metadata
 
    # ------------------------------------------------------------------------------
 
@@ -57,10 +63,25 @@ This is a test tool that takes an input file, writes some text to it and then re
 
           return True
 
-      def run(self, input_files, output_files, metadata=None):
-          self.test_writer(input_files[0], output_files[0])
+      def run(self, input_files, metadata, output_files):
+          self.test_writer(
+              input_files["input_file_location"],
+              output_files["output_file_location"]
+          )
 
-          return (output_files, {})
+          output_metadata = {
+               "test": Metadata(
+                   data_type="<data_type>",
+                   file_type="txt",
+                   file_path=output_files["test"],
+                   sources=[metadata["input_file_location"].file_path],
+                   meta_data={
+                       "tool": "testTool"
+                   }
+               )
+           }
+
+          return (output_files, output_metadata)
 
 This is this simplest case of a Tool that will run a function within the COMPSS environment. The run function takes the input files, if the output files are defined it can use those as the output locations and any relevant metadata. The locations of the output files can also be defined within the run function as sometimes functions can generate a large number of files that are not always easy to define up front if the Tool is being run as part of the VRE or as part of a larger pipeline.
 
@@ -74,7 +95,7 @@ Further details about COMPSS and pyCOMPSs can be found at the BSC website along 
 pyCOMPSs within the Tool
 ------------------------
 
-When importing the modules
+When importing the pyCOMPSs modules it is important to provide access to the dummy_pycompss decorators as well. This will allow scripts to be run on computers where COMPSs has not been installed.
 
 
 Practical Example
@@ -91,7 +112,16 @@ The run function takes the input FASTA file, from this is generates a list of th
 
    from __future__ import print_function
 
+   import os
+   import shlex
+   import shutil
+   import subprocess
+   import sys
+   import tarfile
+
    try:
+       if hasattr(sys, '_run_from_cmdl') is True:
+           raise ImportError
        from pycompss.api.parameter import FILE_IN, FILE_OUT
        from pycompss.api.task import task
        from pycompss.api.api import compss_wait_on
@@ -104,6 +134,7 @@ The run function takes the input FASTA file, from this is generates a list of th
        from dummy_pycompss import compss_wait_on
 
    from basic_modules.tool import Tool
+   from basic_modules.metadata import Metadata
 
    # ------------------------------------------------------------------------------
 
@@ -119,32 +150,93 @@ The run function takes the input FASTA file, from this is generates a list of th
            print("BWA Indexer")
            Tool.__init__(self)
 
-       @task(file_loc=FILE_IN, amb_loc=FILE_OUT, ann_loc=FILE_OUT,
-             bwt_loc=FILE_OUT, pac_loc=FILE_OUT, sa_loc=FILE_OUT)
-       def bwa_indexer(self, file_loc, amb_loc, ann_loc, bwt_loc, pac_loc, sa_loc): # pylint: disable=unused-argument
+       def bwa_runner(self, genome_file):
+           """
+           Create an index of the genome FASTA file with BWA. These are saved
+           alongside the assembly file. If the index has already been generated
+           then the locations of the files are returned
+
+           Parameters
+           ----------
+           genome_file : str
+               Location of the assembly file in the file system
+
+           Returns
+           -------
+           amb_file : str
+               Location of the amb file
+           ann_file : str
+               Location of the ann file
+           bwt_file : str
+               Location of the bwt file
+           pac_file : str
+               Location of the pac file
+           sa_file : str
+               Location of the sa file
+
+           """
+           command_line = 'bwa index ' + genome_file
+
+           amb_name = genome_file + '.amb'
+           ann_name = genome_file + '.ann'
+           bwt_name = genome_file + '.bwt'
+           pac_name = genome_file + '.pac'
+           sa_name = genome_file + '.sa'
+
+           if os.path.isfile(bwt_name) is False:
+               args = shlex.split(command_line)
+               process = subprocess.Popen(args)
+               process.wait()
+
+           return (amb_name, ann_name, bwt_name, pac_name, sa_name)
+
+       @task(file_loc=FILE_IN, idx_out=FILE_OUT)
+       def bwa_indexer(self, file_loc, idx_out): # pylint: disable=unused-argument
            """
            BWA Indexer
 
            Parameters
            ----------
            file_loc : str
-               Location of the genome assembly FASTA file
-           amb_loc : str
-               Location of the output file
-           ann_loc : str
-               Location of the output file
-           bwt_loc : str
-               Location of the output file
-           pac_loc : str
-               Location of the output file
-           sa_loc : str
-               Location of the output file
+               Location of the genome assebly FASTA file
+           idx_out : str
+               Location of the output index file
+
+           Returns
+           -------
+           bool
            """
-           common_handler = common()
-           amb_loc, ann_loc, bwt_loc, pac_loc, sa_loc = common_handler.bwa_index_genome(file_loc)
+           amb_loc, ann_loc, bwt_loc, pac_loc, sa_loc = self.bwa_index_genome(file_loc)
+
+           # tar.gz the index
+           print("BS - idx_out", idx_out, idx_out.replace('.tar.gz', ''))
+           idx_out_pregz = idx_out.replace('.tar.gz', '.tar')
+
+           index_dir = idx_out.replace('.tar.gz', '')
+           os.mkdir(index_dir)
+
+           idx_split = index_dir.split("/")
+
+           shutil.move(amb_loc, index_dir)
+           shutil.move(ann_loc, index_dir)
+           shutil.move(bwt_loc, index_dir)
+           shutil.move(pac_loc, index_dir)
+           shutil.move(sa_loc, index_dir)
+
+           index_folder = idx_split[-1]
+
+           tar = tarfile.open(idx_out_pregz, "w")
+           tar.add(index_dir, arcname=index_folder)
+           tar.close()
+
+           command_line = 'pigz ' + idx_out_pregz
+           args = shlex.split(command_line)
+           process = subprocess.Popen(args)
+           process.wait()
+
            return True
 
-       def run(self, input_files, output_files, metadata=None):
+       def run(self, input_files, metadata, output_files):
            """
            Function to run the BWA over a genome assembly FASTA file to generate
            the matching index for use with the aligner
@@ -153,45 +245,39 @@ The run function takes the input FASTA file, from this is generates a list of th
            ----------
            input_files : list
                List containing the location of the genome assembly FASTA file
-           output_files : list
-               List of output files generated
            meta_data : list
+           output_files : list
+               List of outpout files generated
 
            Returns
            -------
-           list
-               amb_loc : str
-                   Location of the output file
-               ann_loc : str
-                   Location of the output file
-               bwt_loc : str
-                   Location of the output file
-               pac_loc : str
-                   Location of the output file
-               sa_loc : str
-                   Location of the output file
+           output_files : dict
+               index : str
+                   Location of the index file defined in the input parameters
+           output_metadata : dict
+               index : Metadata
+                   Metadata relating to the index file
            """
-           output_metadata = {}
-
-           # Define the names of the output files
-           output_files = [
-               input_files[0] + ".amb",
-               input_files[0] + ".ann",
-               input_files[0] + ".bwt",
-               input_files[0] + ".pac",
-               input_files[0] + ".sa"
-           ]
-
            results = self.bwa_indexer(
-               input_files[0],
-               input_files[0] + ".amb",
-               input_files[0] + ".ann",
-               input_files[0] + ".bwt",
-               input_files[0] + ".pac",
-               input_files[0] + ".sa"
+               input_files["genome"],
+               output_files["index"]
            )
-
            results = compss_wait_on(results)
 
-           return (output_files, [output_metadata])
+           output_metadata = {
+               "index": Metadata(
+                   data_type="sequence_mapping_index_bwa",
+                   file_type="TAR",
+                   file_path=output_files["index"],
+                   sources=[metadata["genome"].file_path],
+                   meta_data={
+                       "assembly": metadata["genome"].meta_data["assembly"],
+                       "tool": "bwa_indexer"
+                   }
+               )
+           }
+
+           return (output_files, output_metadata)
+
+   # ------------------------------------------------------------------------------
 

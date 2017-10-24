@@ -30,8 +30,6 @@ There are 2 ways of calling this function, either directly via the command line.
    from basic_modules.workflow import Workflow
    from basic_modules.metadata import Metadata
 
-   from dmp import dmp
-
    from tools.testTool import testTool
 
    # ------------------------------------------------------------------------------
