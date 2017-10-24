@@ -8,7 +8,7 @@ class Metadata(object):
     """
     Object containing all information pertaining to a specific data element.
     """
-    def __init__(self, data_type, file_type, file_path=None,
+    def __init__(self, data_type=None, file_type=None, file_path=None,
                  sources=None, meta_data=None):
         """
         Initialise the Metadata; for more information see the documentation for
