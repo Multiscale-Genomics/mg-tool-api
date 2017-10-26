@@ -75,6 +75,7 @@ This is a test tool that takes an input file, writes some text to it and then re
                    file_type="txt",
                    file_path=output_files["test"],
                    sources=[metadata["input_file_location"].file_path],
+                   taxon_id=metadata["input_file_location"].taxon_id
                    meta_data={
                        "tool": "testTool"
                    }
@@ -270,6 +271,7 @@ The run function takes the input FASTA file, from this is generates a list of th
                    file_type="TAR",
                    file_path=output_files["index"],
                    sources=[metadata["genome"].file_path],
+                   taxon_id=metadata["genome"].taxon_id,
                    meta_data={
                        "assembly": metadata["genome"].meta_data["assembly"],
                        "tool": "bwa_indexer"

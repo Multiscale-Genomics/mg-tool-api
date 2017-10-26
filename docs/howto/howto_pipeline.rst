@@ -78,8 +78,6 @@ There are 2 ways of calling this function, either directly from another program 
                Matching metadata for each of the files
            """
 
-           file_loc = file_ids[6]
-
            # Initialise the test tool
            tt_handle = testTool(self.configuration)
            tt_files, tt_meta = tt_handle.run(input_files, metadata, output_files)
