@@ -1,6 +1,21 @@
-# -----------------------------------------------------------------------------
-# Metadata class
-# -----------------------------------------------------------------------------
+#!/usr/bin/env python
+"""
+.. See the NOTICE file distributed with this work for additional information
+   regarding copyright ownership.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+"""
+
 import copy
 
 
@@ -38,8 +53,6 @@ class Metadata(object):
         if meta_data is None:
             meta_data = {}
         self.meta_data = meta_data
-        self.exception = None
-        self.error = False
 
     def __repr__(self):
         return """<Metadata:
@@ -48,21 +61,6 @@ class Metadata(object):
             file_path: {md.file_path}
             sources: {md.sources}
             meta_data: {md.meta_data}>""".format(md=self)
-
-    def set_exception(self, exception):
-        """
-        Set an exception on this Metadata, in order to bubble up error
-        information back to the App.
-
-
-        Parameters
-        ----------
-        exception : Exception
-            The exception to rise in the App
-        """
-        self.exception = exception
-        self.error = True
-        return True
 
     @classmethod
     def get_child(cls, parents, path):

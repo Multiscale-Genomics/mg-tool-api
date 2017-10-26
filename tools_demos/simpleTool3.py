@@ -1,3 +1,21 @@
+#!/usr/bin/env python
+"""
+.. See the NOTICE file distributed with this work for additional information
+   regarding copyright ownership.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+"""
+
 import sys
 
 try:
@@ -14,6 +32,7 @@ except ImportError:
 
 from basic_modules.metadata import Metadata
 from basic_modules.tool import Tool
+from utils import logger
 
 
 # -----------------------------------------------------------------------------
@@ -56,6 +75,7 @@ class SimpleTool3(Tool):
         assert len(input_files["input"]) == len(metadata["input"])
 
         # prepare outputs
+        logger.info("SimpleTool3: Preparing outputs")
         output_pattern = output_files["output"]
         output_files["output"] = []
         output_metadata = {}
@@ -66,6 +86,7 @@ class SimpleTool3(Tool):
         previous_metadata = metadata["input"][0]
         
         for i in range(len(input_files["input"]) - 1):
+            logger.info("SimpleTool3: Summing input {}", i)
             # Add next input file:
             next_input = input_files["input"][i+1]
             next_metadata = metadata["input"][i+1]
@@ -85,6 +106,9 @@ class SimpleTool3(Tool):
                 output_metadata["output"].append(metadata_out)
                 previous_input = file_out
                 previous_metadata = metadata_out
+                logger.info("SimpleTool3: Input {} successful", i)
+            else:
+                logger.warn("SimpleTool3: Input {} failed", i)
 
         return output_files, output_metadata
 

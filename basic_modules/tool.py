@@ -1,3 +1,21 @@
+#!/usr/bin/env python
+"""
+.. See the NOTICE file distributed with this work for additional information
+   regarding copyright ownership.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+"""
+
 from __future__ import print_function
 
 # from mug import datatypes as mug_datatypes
@@ -17,6 +35,7 @@ except ImportError:
     from dummy_pycompss import task
 
 from basic_modules.metadata import Metadata
+from utils import logger
 
 # -----------------------------------------------------------------------------
 # Main Tool interface
@@ -127,10 +146,18 @@ class Tool(object):
         assert len(input_files.keys()) == 1
         input_file = input_files["input"]
         output_file = output_files["output"]
+        logger.info("Read 1 input file: {}", input_file)
         # 2: not required
         # 3:
-        self._taskMethod(input_file, output_file)
+        logger.info("Running task")
+        taskStatus = self._taskMethod(input_file, output_file):
+            
         # 4: not required
         # 5:
         output_metadata = Metadata(None, None)
-        return {"output": output_file}, {"output": output_metadata}
+        if taskStatus:
+            logger.info("Task successful")
+            return {"output": output_file}, {"output": output_metadata}
+        else:
+            logger.error("Task failed")
+            return {}, {}

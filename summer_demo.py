@@ -1,3 +1,21 @@
+#!/usr/bin/env python
+"""
+.. See the NOTICE file distributed with this work for additional information
+   regarding copyright ownership.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+"""
+
 """
 Simple example of Workflow using PyCOMPSs, called using an App.
 
@@ -28,7 +46,7 @@ Simple example of Workflow using PyCOMPSs, called using an App.
 from basic_modules.workflow import Workflow
 from tools_demos.simpleTool1 import SimpleTool1
 from tools_demos.simpleTool2 import SimpleTool2
-
+from utils import logger
 
 class SimpleWorkflow(Workflow):
     """
@@ -60,39 +78,55 @@ class SimpleWorkflow(Workflow):
 
     def run(self, input_files, input_metadata, output_files):
 
-        print "\t0. perform checks"
+        logger.info("\t0. perform checks")
         assert len(input_files.keys()) == 2
         assert len(input_metadata.keys()) == 2
         output = output_files["output"]
 
-        print "\t1.a Instantiate Tool 1 and run"
+        logger.info("\t1.a Instantiate Tool 1 and run")
         simpleTool1 = SimpleTool1(self.configuration)
-        output1, outmd1 = simpleTool1.run(
-            # Use remap to convert role "number1" to "input" for simpleTool1
-            remap(input_files, input="number1"),
-            remap(input_metadata, input="number1"),
-            # Use a temporary file name for intermediate outputs
-            {"output": 'file1.out'})
 
-        print "\t1.b (Instantiate Tool) and run"
-        output2, outmd2 = simpleTool1.run(
-            # Use remap to convert role "number2" to "input" for simpleTool1
-            remap(input_files, input="number2"),
-            remap(input_metadata, input="number2"),
-            # Use a temporary file name for intermediate outputs
-            {"output": 'file2.out'})
+        try:
+            output1, outmd1 = simpleTool1.run(
+                # Use remap to convert role "number1" to "input" for simpleTool1
+                remap(input_files, input="number1"),
+                remap(input_metadata, input="number1"),
+                # Use a temporary file name for intermediate outputs
+                {"output": 'file1.out'})
+        except Exception as e:
+            logger.fatal("Tool 1, run 1 failed: {}", e)
+            return {}, {}
+        logger.progress(50)  # out of 100
 
-        print "\t2. Instantiate Tool and run"
+        logger.info("\t1.b (Instantiate Tool) and run")
+        try:
+            output2, outmd2 = simpleTool1.run(
+                # Use remap to convert role "number2" to "input" for simpleTool1
+                remap(input_files, input="number2"),
+                remap(input_metadata, input="number2"),
+                # Use a temporary file name for intermediate outputs
+                {"output": 'file2.out'})
+        except Exception as e:
+            logger.fatal("Tool 1, run 2 failed: {}", e)
+            return {}, {}            
+        logger.progress(75)  # out of 100
+
+        logger.info("\t2. Instantiate Tool and run")
         simpleTool2 = SimpleTool2(self.configuration)
-        output3, outmd3 = simpleTool2.run(
-            # Instead of using remap, here we re-build dicts to convert input roles
-            {"input1": output1["output"], "input2": output2["output"]},
-            {"input1": outmd1["output"], "input2": outmd2["output"]},
-            # Workflow output files are from this Tool
-            output_files)
+        try:
+            output3, outmd3 = simpleTool2.run(
+                # Instead of using remap, here we re-build dicts to convert input roles
+                {"input1": output1["output"], "input2": output2["output"]},
+                {"input1": outmd1["output"], "input2": outmd2["output"]},
+                # Workflow output files are from this Tool
+                output_files)
+        except Exception as e:
+            logger.fatal("Tool 2 failed: {}", e)
+            return {}, {}            
+        logger.progress(100)  # out of 100
 
-        print "\t4. Optionally edit the output metadata"
-        print "\t5. Return"
+        logger.info("\t4. Optionally edit the output metadata")
+        logger.info("\t5. Return")
         return output3, outmd3
 
 
@@ -107,14 +141,14 @@ def main(inputFiles, inputMetadata, outputFiles):
     """
 
     # 1. Instantiate and launch the App
-    print "1. Instantiate and launch the App"
+    logger.info("1. Instantiate and launch the App")
     from apps.workflowapp import WorkflowApp
     app = WorkflowApp()
     result = app.launch(SimpleWorkflow, inputFiles, inputMetadata,
                         outputFiles, {})
 
     # 2. The App has finished
-    print "2. Execution finished"
+    logger.info("2. Execution finished")
 
 
 def main_json():
@@ -126,16 +160,16 @@ def main_json():
     two json files: config.json and input_metadata.json.
     """
     # 1. Instantiate and launch the App
-    print "1. Instantiate and launch the App"
+    logger.info("1. Instantiate and launch the App")
     from apps.jsonapp import JSONApp
     app = JSONApp()
     result = app.launch(SimpleWorkflow,
-                        "/tmp/",
                         "tools_demos/config.json",
-                        "tools_demos/input_metadata.json")
+                        "tools_demos/input_metadata.json",
+                        "/tmp/results.json")
 
     # 2. The App has finished
-    print "2. Execution finished; see /tmp/results.json"
+    logger.info("2. Execution finished; see /tmp/results.json")
     
 
 if __name__ == "__main__":
@@ -149,12 +183,12 @@ if __name__ == "__main__":
 
     # The VRE has to prepare the data to be processed.
     # In this example we create 2 files for testing purposes.
-    print "1. Create some data: 2 input files"
+    logger.info("1. Create some data: 2 input files")
     with open(inputFile1, "w") as f:
         f.write("5")
     with open(inputFile2, "w") as f:
         f.write("9")
-    print "\t* Files successfully created"
+    logger.info("\t* Files successfully created")
 
     # Read metadata file and build a dictionary with the metadata:
     from basic_modules.metadata import Metadata

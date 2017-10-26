@@ -1,9 +1,24 @@
-# from mug import datatypes as mug_datatypes
-from datatypes import Datatypes as mug_datatypes
+#!/usr/bin/env python
+"""
+.. See the NOTICE file distributed with this work for additional information
+   regarding copyright ownership.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+"""
+
 from metadata import Metadata
 
 
-# TODO: remove error handling once logging is sorted out
 # -----------------------------------------------------------------------------
 # Main App Interface
 # -----------------------------------------------------------------------------
@@ -18,9 +33,8 @@ class App(object):
 
     In general, App deals with:
 
-    1) instantiate and configure the Tool,
-    2) call its "run" method and
-    3) deal with errors
+    1) instantiate and configure the Tool, and
+    2) call its "run" method
 
     The App.launch() method is called in order to run a Tool within the App,
     with each call wrapping a single Tool class. The App.launch method calls
@@ -28,12 +42,6 @@ class App(object):
     should be called to execute operations before and after, in order to
     facilitate the accumulation of features in App subclasses in a way similar
     to the mixin pattern (see for example WorkflowApp).
-
-    The App must check for errors in Tool execution and take the necessary
-    actions to report the errors to the caller. Since Tools may generally be
-    executed on separate machines, the Exceptions are passed by the Tools in
-    the Metadata (see Metadata.set_exception). The App._error_report() method
-    should be called to report errors.
 
     As Apps need to be compatible with any Tool, it is unpractical to use Apps
     to combine Tools. Instead, Workflows can be implemented (see Workflow) in
@@ -79,7 +87,7 @@ class App(object):
               by the Tool, associated with their role;
           output_metadata : dict
               a dict of metadatas for each of the output data elements created
-              by the Tool, associated with their role;
+              by the Tool, associated with their role.
 
 
         Example
@@ -104,16 +112,6 @@ class App(object):
         output_files, output_metadata = self._post_run(tool_instance,
                                                        output_files,
                                                        output_metadata)
-
-        print "3) Check for errors"
-        for key, outmd in output_metadata.items():
-            if not isinstance(outmd, (list, tuple)):
-                outmd = [outmd]
-            if any([md.error for md in outmd]):
-                fatal = self._error(
-                    [md for md in outmd if md.error])
-                if fatal:
-                    return None
 
         print "Output_files: ", output_files
         return output_files, output_metadata
@@ -146,16 +144,3 @@ class App(object):
         Returns output_files and output_metadata.
         """
         return output_files, output_metadata
-
-    def _error(self, error_metadata):
-        """
-        Subclasses can specify here operations to be executed to treat and
-        report errors occurred in Tool.run(). The passed error_metadata should
-        be only instances of Metadata that carry an Exception.
-
-        Returns True if the error is FATAL and entails immediate arrest of App
-        operations (i.e. unstaging will not occur).
-        """
-        for errmd in error_metadata:
-            print errmd.exception
-        return True

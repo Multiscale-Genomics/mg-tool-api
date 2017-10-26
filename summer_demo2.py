@@ -1,3 +1,21 @@
+#!/usr/bin/env python
+"""
+.. See the NOTICE file distributed with this work for additional information
+   regarding copyright ownership.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+"""
+
 """
 Simple example of Workflow using PyCOMPSs, called using an App.
 
@@ -34,6 +52,7 @@ from basic_modules.workflow import Workflow
 from tools_demos.simpleTool1 import SimpleTool1
 from tools_demos.simpleTool3 import SimpleTool3
 from utils import remap
+from utils import logger
 
 
 class SimpleWorkflow(Workflow):
@@ -68,7 +87,7 @@ class SimpleWorkflow(Workflow):
 
     def run(self, input_files, input_metadata, output_files):
 
-        print "\t0. perform checks"
+        logger.info("\t0. perform checks")
         assert len(input_files.keys()) == 1
         assert len(input_metadata.keys()) == 1
         assert len(input_files["number"]) == len(input_metadata["number"])
@@ -78,29 +97,38 @@ class SimpleWorkflow(Workflow):
         out_mds = []
 
         # Run through inputs and apply SimpleTool1 to each
-        print "\t1.a Instantiate Tool1"
+        logger.info("\t1.a Instantiate Tool1")
         simpleTool1 = SimpleTool1(self.configuration)
 
         for i, path in enumerate(input_files["number"]):
             metadata = input_metadata["number"][i]
-            print "\t1.b run {}".format(i)
-            output, outmd = simpleTool1.run(
-                {"input": path},
-                {"input": metadata},
-                {"output": path + '.out'})
-            outputs.append(output["output"])
-            out_mds.append(outmd["output"])
+            logger.info("\t1.b run {}".format(i))
+            try:
+                output, outmd = simpleTool1.run(
+                    {"input": path},
+                    {"input": metadata},
+                    {"output": path + '.out'})
+                outputs.append(output["output"])
+                out_mds.append(outmd["output"])
+            except Exception as e:
+                logger.error("Tool 1, run {} failed: {}", i, e)
+            logger.progress(75 * i / len(input_files["number"]))
+        logger.info("\t2. Instantiate Tool and run")
 
-        print "\t2. Instantiate Tool and run"
         # Apply SimpleTool3 to all outputs of first step
         simpleTool3 = SimpleTool3(self.configuration)
-        output3, outmd3 = simpleTool3.run(
-            {"input": outputs},
-            {"input": out_mds},
-            output_files)
+        try:
+            output3, outmd3 = simpleTool3.run(
+                {"input": outputs},
+                {"input": out_mds},
+                output_files)
+        except Exception as e:
+            logger.fatal("Tool 2 failed: {}", e)
+            return {}, {}
+        logger.progress(100)
 
-        print "\t4. Optionally edit the output metadata"
-        print "\t5. Return"
+        logger.info("\t4. Optionally edit the output metadata")
+        logger.info("\t5. Return")
         return output3, outmd3
 
 
@@ -115,14 +143,14 @@ def main(inputFiles, inputMetadata, outputFiles):
     """
 
     # 1. Instantiate and launch the App
-    print "1. Instantiate and launch the App"
+    logger.info("1. Instantiate and launch the App")
     from apps.workflowapp import WorkflowApp
     app = WorkflowApp()
     result = app.launch(SimpleWorkflow, inputFiles, inputMetadata,
                         outputFiles, {})
 
     # 2. The App has finished
-    print "2. Execution finished"
+    logger.info("2. Execution finished")
 
 
 def main_json():
@@ -134,16 +162,16 @@ def main_json():
     two json files: config.json and input_metadata.json.
     """
     # 1. Instantiate and launch the App
-    print "1. Instantiate and launch the App"
+    logger.info("1. Instantiate and launch the App")
     from apps.jsonapp import JSONApp
     app = JSONApp()
     result = app.launch(SimpleWorkflow,
-                        "/tmp/",
                         "tools_demos/config2.json",
-                        "tools_demos/input_metadata2.json")
+                        "tools_demos/input_metadata2.json",
+                        "/tmp/results.json")
 
     # 2. The App has finished
-    print "2. Execution finished; see /tmp/results.json"
+    logger.info("2. Execution finished; see /tmp/results.json"
     
 
 if __name__ == "__main__":
@@ -155,14 +183,14 @@ if __name__ == "__main__":
 
     # The VRE has to prepare the data to be processed.
     # In this example we create 2 files for testing purposes.
-    print "1. Create some data: 2 input files"
+    logger.info("1. Create some data: 2 input files")
     with open(inputFile1, "w") as f:
         f.write("5")
     with open(inputFile2, "w") as f:
         f.write("9")
     with open(inputFile3, "w") as f:
         f.write("13")
-    print "\t* Files successfully created"
+    logger.info("\t* Files successfully created")
 
     # Read metadata file and build a dictionary with the metadata:
     from basic_modules.metadata import Metadata
