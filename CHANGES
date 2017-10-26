@@ -20,7 +20,8 @@ Author: Marco Pasi
 - Added utils.logger interface
 - Modified all examples to use utils.logger:
   basic_modules.tool, tools_demos/*.py, summer_demo*
-
+- removed datatypes.py
+- updated README.md
 
 **********
 04/10/2017

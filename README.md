@@ -19,18 +19,16 @@ VRE.
 
 2. Achieve vertical interoperability by using COMPSs, and allowing
 developers to specify the execution enviroment requirements for each tool by
-using COMPSs "constraints" decorator.
+using COMPSs "constraints" decorator. Although written with task-based 
+programming in mind, this library allows execution of Tools outside of the 
+COMPSs runtime.
 
-3. Provide a unified, simple paradigm to access the diverse data storage
-facilities defined in the DMP, by wrapping data in Python objects (see
-"Resource" below) that implement a common API that abstracts the details of
-data retrieval; this also makes changes in the DMP transparent to the tools.
-
-4. Simplify the construction of workflows, by conceiving tools such that it is
-straightforward to combine them in workflows, using COMPSs "task" decorator and
-the COMPSs runtime as the workflow scheduler.
+3. Simplify the construction of workflows, by conceiving tools such that it is
+straightforward to combine them in Workflows; in particular by using COMPSs 
+"task" decorator and the COMPSs runtime as the workflow scheduler.
 
 ## Implementation overview
+The 'basic_modules' contains the basic entities of mg-tool-api:
 1. Tool:
 	Is the top-level wrapper for tools within the VRE; each tool is defined
 	by its input and output formats, and by its specific requirements on the
@@ -38,6 +36,7 @@ the COMPSs runtime as the workflow scheduler.
 	operations needed to get from input to output. The "run" method calls other
 	methods which are decorated using PyCOMPSs "@task" and "@constraints",
 	allowing tool developers to define the workflow and execution environment.
+    See also Workflow.
 2. App:
 	Is the main entry point to the tools layer of the VRE; it deals with heterogeneity
 	in the way Tools are run, in terms of filesystem access, runtime environment,
@@ -45,31 +44,29 @@ the COMPSs runtime as the workflow scheduler.
 	Apps implement a "launch" method, which prepares and runs a single instance of Tool.
 	The "apps" module provides some example Apps for straightforward cases:
 
-	- *LocalApp*: uses the MuG DMP API to retrieve file names that are assumed
-	to be locally accessible;
+	- *LocalApp*: assumes files to be locally accessible;
 
 	- *PyCOMPSsApp*: specific for Tools using PyCOMPSs;
 
 	- *WorkflowApp*: inherits from both of the above, and implements the ability
-	to unstage intermediate outputs.
+	  to run Workflows.
 
-3. mug_datatypes:
-     A repository of all data types available in MuG; it should closely mirror
-     the contents of the DMP.
-4. mug_conversion:
-     A library containing commodity functions to perform frequently needed
-     conversion operations to and from the formats defined in the DMP. Tool
-     developers can also implement their own conversion operations when missing
-     from this library.
-5. Error handling:
-     as a first attempt, the Tool catches all pertinent exceptions, while
-     others not related to the Tool should not be caught. The Tool also takes
-     care of attaching error information to the output resource.
+	- *JSONApp*: inherits from WorkflowApp, and implements the ability to read
+	  run configuration from JSON files, and write results in a JSON file; JSON
+      formats used are those provided, and accepted, by the VRE.
+
+3. Metadata:
+   Class that contains extra information about files.
+
+The 'utils' module contains useful functions for performing common tasks in Tool
+execution. In particular it contains 'logger', the logging facility of mg-tool-api; 
+it provides a unified way of sending messages to the VRE.
 
 See the documentation for the classes for more information.
 
 ## Examples
 
-The "examples" module contains usage examples.
+The "summer_demo.py" and "summer_demo2.py" examples implement workflows using PyCOMPSs. 
+They showcase various functionalities of the library by using the mockup Tools 
+implemented in the tools_demos module.
 
-The "summer.py" example implements a workflow using PyCOMPSs.
