@@ -46,6 +46,7 @@ Simple example of Workflow using PyCOMPSs, called using an App.
 from basic_modules.workflow import Workflow
 from tools_demos.simpleTool1 import SimpleTool1
 from tools_demos.simpleTool2 import SimpleTool2
+from utils import remap
 from utils import logger
 
 class SimpleWorkflow(Workflow):

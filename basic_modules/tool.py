@@ -150,7 +150,7 @@ class Tool(object):
         # 2: not required
         # 3:
         logger.info("Running task")
-        taskStatus = self._taskMethod(input_file, output_file):
+        taskStatus = self._taskMethod(input_file, output_file)
             
         # 4: not required
         # 5:

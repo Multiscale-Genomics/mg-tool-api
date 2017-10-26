@@ -54,13 +54,14 @@ STDOUT_LEVELS = [DEBUG, INFO, PROGRESS]
 STDERR_LEVELS = [WARNING, ERROR, FATAL, CRITICAL]
 
 _levelNames = {
-    CRITICAL : 'CRITICAL',
+    FATAL : 'FATAL',
     ERROR : 'ERROR',
     WARNING : 'WARNING',
     PROGRESS : 'PROGRESS',
     INFO : 'INFO',
     DEBUG : 'DEBUG',
-    WARN : WARNING
+    WARN : WARNING,
+    CRITICAL : FATAL
 }
 
 def __log(level, message, *args, **kwargs):
@@ -70,7 +71,7 @@ def __log(level, message, *args, **kwargs):
     if level in STDERR_LEVELS:
         outstream = sys.stderr
     outstream.write("{}: {}\n".format(
-        _levelNames[level], message, *args, **kwargs))
+        _levelNames[level], message.format(*args, **kwargs)))
     return True
 
 def debug(message, *args, **kwargs):
@@ -83,23 +84,34 @@ def debug(message, *args, **kwargs):
     single dictionary argument.) 
     """
     return __log(DEBUG, message, *args, **kwargs)
+
+def info(message, *args, **kwargs):
+    """
+    Logs a message with level INFO. The arguments are interpreted as for
+    debug().
+    """
+    return __log(INFO, message, *args, **kwargs)
+
 def warn(message, *args, **kwargs):
     """
     Logs a message with level WARNING. The arguments are interpreted as for
-    debug(). 
+    debug().
     """
     return __log(WARNING, message, *args, **kwargs)
+
 warning = warn
+
 def error(message, *args, **kwargs):
     """
     Logs a message with level ERROR. The arguments are interpreted as for
-    debug(). 
+    debug().
     """
     return __log(ERROR, message, *args, **kwargs)
+
 def fatal(message, *args, **kwargs):
     """
     Logs a message with level FATAL. The arguments are interpreted as for
-    debug(). 
+    debug().
     """
     return __log(FATAL, message, *args, **kwargs)
 critical=fatal

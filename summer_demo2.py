@@ -171,7 +171,7 @@ def main_json():
                         "/tmp/results.json")
 
     # 2. The App has finished
-    logger.info("2. Execution finished; see /tmp/results.json"
+    logger.info("2. Execution finished; see /tmp/results.json")
     
 
 if __name__ == "__main__":
