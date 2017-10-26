@@ -24,10 +24,10 @@ class Metadata(object):
     Object containing all information pertaining to a specific data element.
     """
     def __init__(self, data_type=None, file_type=None, file_path=None,
-                 sources=None, meta_data=None):
+                 sources=None, meta_data=None, taxon_id=None):
         """
         Initialise the Metadata; for more information see the documentation for
-        the MuG DMP API. 
+        the MuG DMP API.
 
 
         Parameters
@@ -47,6 +47,7 @@ class Metadata(object):
         self.data_type = data_type
         self.file_type = file_type
         self.file_path = file_path
+        self.taxon_id = taxon_id
         if sources is None:
             sources = []
         self.sources = sources
@@ -60,6 +61,7 @@ class Metadata(object):
             file_type: {md.file_type}
             file_path: {md.file_path}
             sources: {md.sources}
+            taxon_id: {md.taxon_id}
             meta_data: {md.meta_data}>""".format(md=self)
 
     @classmethod
@@ -105,4 +107,5 @@ class Metadata(object):
                    parents[0].file_type,
                    path,
                    sources=[parent.file_path for parent in parents],
-                   meta_data=meta_data)
+                   meta_data=meta_data,
+                   taxon_id=parents[0].taxon_id)
