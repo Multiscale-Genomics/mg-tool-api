@@ -1,1 +1,29 @@
-[{"data_type": "Number", "file_type": "plainText", "meta_data": {"owner": "user", "visible": true, "validated": 1, "data_type": "Number"}, "compressed": 0, "source_id": [], "_id": "ID1", "file_path": "file1"}, {"data_type": "Number", "file_type": "plainText", "meta_data": {"owner": "user", "visible": true, "validated": 1, "data_type": "Number"}, "compressed": 0, "source_id": [], "_id": "ID2", "file_path": "file2"}]
+[
+    {"data_type": "Number",
+     "file_type": "plainText",
+     "taxon_id": 9606,
+     "meta_data": {
+         "owner": "user",
+         "visible": true,
+         "validated": 1,
+         "data_type": "Number"
+     },
+     "compressed": 0,
+     "sources": [],
+     "_id": "ID1",
+     "file_path": "/tmp/file1"
+    },
+    {"data_type": "Number",
+     "file_type": "plainText",
+     "taxon_id": 9606,
+     "meta_data": {
+         "owner": "user",
+         "visible": true,
+         "validated": 1,
+         "data_type": "Number"
+     },
+     "compressed": 0,
+     "sources": [],
+     "_id": "ID2",
+     "file_path": "/tmp/file2"
+    }]

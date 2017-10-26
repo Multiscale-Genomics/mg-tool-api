@@ -218,5 +218,7 @@ either 1 or {np}, not {nm}""".format(role=role, np=len(path), nm=len(metdata))
             else:
                 results.append(
                     _newresult(role, path, metadata))
-        json.dump({"output_files": results}, file(json_path, 'w'))
+        json.dump(
+            {"output_files": results}, file(json_path, 'w'),
+            indent=4, separators=(',', ': '))
         return True
