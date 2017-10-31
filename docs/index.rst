@@ -12,7 +12,6 @@ Welcome to MG Tools API's documentation!
 
    install
    tools-api
-   howto/index
 
 
 
