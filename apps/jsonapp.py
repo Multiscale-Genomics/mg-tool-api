@@ -159,10 +159,10 @@ class JSONApp(WorkflowApp):
             input_metadata[ID] = Metadata(
                 data_type=input_file["data_type"],
                 file_type=input_file["file_type"],
-                file_path=input_file["file_path"],
                 meta_data=input_file["meta_data"],
-                sources=input_file["sources"],
-                taxon_id=input_file["taxon_id"]
+                taxon_id=input_file["taxon_id"],
+                file_path=input_file.get("file_path", None),  # optional
+                sources=input_file.get("sources", []),  # optional
             )
         return input_metadata
 
