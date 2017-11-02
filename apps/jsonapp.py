@@ -135,7 +135,7 @@ class JSONApp(WorkflowApp):
 
         output_files = {}
         for output_file in configuration["output_files"]:
-            output_files[output_file["name"]] = output_file["file"]["file_path"]
+            output_files[output_file["name"]] = output_file["file"].get("file_path", None)
 
         arguments = {}
         for argument in configuration["arguments"]:
@@ -159,10 +159,10 @@ class JSONApp(WorkflowApp):
             input_metadata[ID] = Metadata(
                 data_type=input_file["data_type"],
                 file_type=input_file["file_type"],
+                file_path=input_file["file_path"],
                 meta_data=input_file["meta_data"],
                 taxon_id=input_file["taxon_id"],
-                file_path=input_file.get("file_path", None),  # optional
-                sources=input_file.get("sources", []),  # optional
+                sources=input_file["sources"]
             )
         return input_metadata
 
