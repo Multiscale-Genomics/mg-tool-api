@@ -60,8 +60,8 @@ _levelNames = {
     PROGRESS : 'PROGRESS',
     INFO : 'INFO',
     DEBUG : 'DEBUG',
-    WARN : WARNING,
-    CRITICAL : FATAL
+    WARN : 'WARNING',
+    CRITICAL : 'FATAL'
 }
 
 def __log(level, message, *args, **kwargs):
