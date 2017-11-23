@@ -31,8 +31,8 @@ except ImportError:
     print("[Warning] Cannot import \"pycompss\" API packages.")
     print("          Using mock decorators.")
 
-    from dummy_pycompss import FILE_IN, FILE_OUT
-    from dummy_pycompss import task
+    from utils.dummy_pycompss import FILE_IN, FILE_OUT
+    from utils.dummy_pycompss import task
 
 from basic_modules.metadata import Metadata
 from utils import logger
@@ -151,7 +151,7 @@ class Tool(object):
         # 3:
         logger.info("Running task")
         taskStatus = self._taskMethod(input_file, output_file)
-            
+
         # 4: not required
         # 5:
         output_metadata = Metadata(None, None)

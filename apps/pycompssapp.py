@@ -29,7 +29,7 @@ except ImportError:
     print("[Warning] Cannot import \"pycompss\" API packages.")
     print("          Using mock decorators.")
 
-    from dummy_pycompss import compss_wait_on
+    from utils.dummy_pycompss import compss_wait_on
 
 from basic_modules.app import App
 

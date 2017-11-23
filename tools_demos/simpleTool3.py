@@ -27,8 +27,8 @@ except ImportError:
     print("[Warning] Cannot import \"pycompss\" API packages.")
     print("          Using mock decorators.")
 
-    from dummy_pycompss import FILE_IN, FILE_OUT
-    from dummy_pycompss import task
+    from utils.dummy_pycompss import FILE_IN, FILE_OUT
+    from utils.dummy_pycompss import task
 
 from basic_modules.metadata import Metadata
 from basic_modules.tool import Tool
@@ -80,11 +80,11 @@ class SimpleTool3(Tool):
         output_files["output"] = []
         output_metadata = {}
         output_metadata["output"] = []
-        
+
         # Iteratively run the task
         previous_input = input_files["input"][0]
         previous_metadata = metadata["input"][0]
-        
+
         for i in range(len(input_files["input"]) - 1):
             logger.info("SimpleTool3: Summing input {}", i)
             # Add next input file:
