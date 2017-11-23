@@ -22,6 +22,15 @@ from functools import wraps
 def compss_wait_on(a):
     return a
 
+def compss_open(a, *args, **kwargs):
+    return a
+
+def barrier():
+    return
+
+def local(a):
+    return a
+
 class constraint(object):
     @wraps(object)
     def __init__(self, *args, **kwargs):
