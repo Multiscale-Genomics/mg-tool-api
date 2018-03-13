@@ -208,7 +208,7 @@ class JSONApp(WorkflowApp):
                         len(metadata) == len(path)) or \
                         isinstance(metadata, Metadata), \
                         """Wrong number of metadata entries for role {role}:
-either 1 or {np}, not {nm}""".format(role=role, np=len(path), nm=len(metdata))
+either 1 or {np}, not {nm}""".format(role=role, np=len(path), nm=len(metadata))
 
                 if not isinstance(metadata, (list, tuple)):
                     metadata = [metadata] * len(path)
