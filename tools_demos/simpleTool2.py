@@ -27,8 +27,8 @@ except ImportError:
     print("[Warning] Cannot import \"pycompss\" API packages.")
     print("          Using mock decorators.")
 
-    from dummy_pycompss import FILE_IN, FILE_OUT
-    from dummy_pycompss import task
+    from utils.dummy_pycompss import FILE_IN, FILE_OUT
+    from utils.dummy_pycompss import task
 
 from basic_modules.metadata import Metadata
 from basic_modules.tool import Tool
@@ -80,7 +80,7 @@ class SimpleTool2(Tool):
         taskStatus = self.sumTwoFiles(input_files["input1"],
                                       input_files["input2"],
                                       output_files["output"])
-        
+
         if taskStatus:
             logger.info("SimpleTool2: run successful")
             return (output_files,
