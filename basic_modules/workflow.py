@@ -16,10 +16,12 @@
    limitations under the License.
 """
 
+
 # ------------------------------------------------------------------------------
 # Main Workflow interface
 # ------------------------------------------------------------------------------
-class Workflow(object):
+
+class Workflow(object):  # pylint: disable=too-few-public-methods
     """
     Abstract class describing a Workflow.
 
@@ -48,7 +50,7 @@ class Workflow(object):
     """
     configuration = {}
 
-    def run(self, input_files, metadata, output_files):
+    def run(self, input_files, metadata, output_files):  # pylint: disable=no-self-use,unused-argument
         """
         Perform the required operations to achieve the functionality of the
         Workflow. This usually involves:

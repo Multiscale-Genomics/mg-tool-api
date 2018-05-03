@@ -18,8 +18,6 @@
 
 from __future__ import print_function
 
-# from mug import datatypes as mug_datatypes
-
 import sys
 
 try:
@@ -35,12 +33,14 @@ except ImportError:
     from utils.dummy_pycompss import task
 
 from basic_modules.metadata import Metadata
-from utils import logger
+from utils import logger  # pylint: disable=ungrouped-imports
+
 
 # -----------------------------------------------------------------------------
 # Main Tool interface
 # -----------------------------------------------------------------------------
-class Tool(object):
+
+class Tool(object):  # pylint: disable=too-few-public-methods
     """
     Abstract class describing a specific operation on a precise input data type
     to produce a precise output data type.
@@ -63,7 +63,7 @@ class Tool(object):
     """
     configuration = {}
 
-    def __init__(self, configuration={}):
+    def __init__(self, configuration=None):
         """
         Initialise the tool with its configuration.
 
@@ -74,11 +74,14 @@ class Tool(object):
             a dictionary containing parameters that define how the operation
             should be carried out, which are specific to each Tool.
         """
+        if configuration is None:
+            configuration = {}
+
         self.configuration.update(configuration)
 
     # @constraint()
     @task(input_file=FILE_IN, output_file=FILE_OUT, isModifier=False)
-    def _taskMethod(self, input_file, output_file):
+    def _taskMethod(self, input_file, output_file):  # pylint: disable=no-self-use,invalid-name,unused-argument
         """
         This method performs the actions required to achieve the Tool's
         functionality. Note the use of the "@task" and "@constraint"
@@ -86,7 +89,7 @@ class Tool(object):
         """
         return True
 
-    def run(self, input_files, input_metadata, output_files):
+    def run(self, input_files, input_metadata, output_files):  # pylint: disable=unused-argument
         """
         Perform the required operations to achieve the functionality of the
         Tool. This usually involves:
@@ -150,14 +153,14 @@ class Tool(object):
         # 2: not required
         # 3:
         logger.info("Running task")
-        taskStatus = self._taskMethod(input_file, output_file)
+        task_status = self._taskMethod(input_file, output_file)
 
         # 4: not required
         # 5:
         output_metadata = Metadata(None, None)
-        if taskStatus:
+        if task_status:
             logger.info("Task successful")
             return {"output": output_file}, {"output": output_metadata}
-        else:
-            logger.error("Task failed")
-            return {}, {}
+
+        logger.error("Task failed")
+        return {}, {}

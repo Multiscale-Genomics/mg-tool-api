@@ -16,6 +16,7 @@
    limitations under the License.
 """
 
+from __future__ import print_function
 import sys
 
 try:
@@ -27,8 +28,8 @@ except ImportError:
     print("[Warning] Cannot import \"pycompss\" API packages.")
     print("          Using mock decorators.")
 
-    from utils.dummy_pycompss import FILE_IN, FILE_OUT
-    from utils.dummy_pycompss import task
+    from utils.dummy_pycompss import FILE_IN, FILE_OUT  # pylint: disable=ungrouped-imports
+    from utils.dummy_pycompss import task  # pylint: disable=ungrouped-imports
 
 from basic_modules.metadata import Metadata
 from basic_modules.tool import Tool
@@ -45,7 +46,7 @@ class SimpleTool1(Tool):
     # @constraint()
     @task(input_file=FILE_IN, output_file=FILE_OUT,
           returns=int, isModifier=False)
-    def inputPlusOne(self, input_file, output_file):
+    def inputPlusOne(self, input_file, output_file):  # pylint: disable=invalid-name,no-self-use
         """
         Task that writes a file with the content from a file plus one
         @param input_file Input file where the initial content is
@@ -54,36 +55,36 @@ class SimpleTool1(Tool):
         """
         try:
             data = None
-            with open(input_file, 'r+') as f:
-                data = f.readline()
-            print "DATA: ", data
-            with open(output_file, 'w') as f:
-                f.write(str(int(data) + 1))
+            with open(input_file, 'r+') as input_file_handle:
+                data = input_file_handle.readline()
+            print("DATA: ", data)
+            with open(output_file, 'w') as output_file_handle:
+                output_file_handle.write(str(int(data) + 1))
             return True
-        except:
+        except (IOError, OSError):
             return False
 
-    def run(self, input_files, metadata, output_files):
+    def run(self, input_files, input_metadata, output_files):
         """
         Standard function to call a task
         """
 
         # input and output share most metadata
         output_metadata = Metadata.get_child(
-            metadata["input"], output_files["output"])
+            input_metadata["input"], output_files["output"])
 
         # Run the tool
         logger.info("SimpleTool1: Running task inputPlusOne")
-        taskStatus = self.inputPlusOne(input_files["input"],
-                                       output_files["output"])
+        task_status = self.inputPlusOne(input_files["input"],
+                                        output_files["output"])
         logger.info("SimpleTool1: task inputPlusOne done")
 
-        if taskStatus:
+        if task_status:
             logger.info("SimpleTool1: run successful")
             return ({"output": output_files["output"]},
                     {"output": output_metadata})
-        else:
-            logger.fatal("SimpleTool1: run failed")
-            return {}, {}
+
+        logger.fatal("SimpleTool1: run failed")
+        return {}, {}
 
 # -----------------------------------------------------------------------------

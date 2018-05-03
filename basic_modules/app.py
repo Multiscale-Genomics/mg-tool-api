@@ -16,13 +16,14 @@
    limitations under the License.
 """
 
-from metadata import Metadata
+from __future__ import print_function
+from basic_modules.metadata import Metadata  # pylint: disable=unused-import
 
 
 # -----------------------------------------------------------------------------
 # Main App Interface
 # -----------------------------------------------------------------------------
-class App(object):
+class App(object):  # pylint: disable=too-few-public-methods
     """
     The generic App interface.
 
@@ -54,7 +55,7 @@ class App(object):
     see PyCOMPSsApp).
     """
 
-    def launch(self, tool_class,
+    def launch(self, tool_class,  # pylint: disable=too-many-arguments
                input_files, input_metadata,
                output_files, configuration):
         """
@@ -97,10 +98,10 @@ class App(object):
         >>> app.launch(Tool, {"input": <input_file>}, {})
         """
 
-        print "1) Instantiate and configure Tool"
+        print("1) Instantiate and configure Tool")
         tool_instance = self._instantiate_tool(tool_class, configuration)
 
-        print "2) Run Tool"
+        print("2) Run Tool")
         input_files, input_metadata = self._pre_run(tool_instance,
                                                     input_files,
                                                     input_metadata)
@@ -113,17 +114,17 @@ class App(object):
                                                        output_files,
                                                        output_metadata)
 
-        print "Output_files: ", output_files
+        print("Output_files: ", output_files)
         return output_files, output_metadata
 
-    def _instantiate_tool(self, tool_class, configuration):
+    def _instantiate_tool(self, tool_class, configuration):  # pylint: disable=no-self-use
         """
         Instantiate the Tool with its configuration.
         Returns instance of the specified Tool subclass.
         """
         return tool_class(configuration)
 
-    def _pre_run(self, tool_instance, input_files, input_metadata):
+    def _pre_run(self, tool_instance, input_files, input_metadata):  # pylint: disable=no-self-use,unused-argument
         """
         Subclasses can specify here operations to be executed BEFORE running
         Tool.run(); subclasses should also run the superclass _pre_run.
@@ -134,7 +135,7 @@ class App(object):
         """
         return input_files, input_metadata
 
-    def _post_run(self, tool_instance, output_files, output_metadata):
+    def _post_run(self, tool_instance, output_files, output_metadata):  # pylint: disable=no-self-use,unused-argument
         """
         Subclasses can specify here operations to be executed AFTER running
         Tool.run(); subclasses should also run the superclass _post_run.

@@ -17,43 +17,64 @@
    functions can be run outside of the COMPS environment for testing purposes.
 """
 
+from __future__ import print_function
 from functools import wraps
 
-def compss_wait_on(a):
-    return a
 
-def compss_open(a, *args, **kwargs):
-    return a
+def compss_wait_on(job):
+    """
+    Dummy wait on function
+    """
+    return job
+
+
+def compss_open(job, *args, **kwargs):  # pylint: disable=unused-argument
+    """
+    Dummy open function required when copying from out of the COMPSs system
+    """
+    return job
+
 
 def barrier():
+    """
+    Dummy function to trigger the pipeline to wait till all jobs have completed
+    """
     return
 
-def local(a):
-    return a
 
-class constraint(object):
+def local(job):
+    """
+    Dummy local function for triggering the job to be run locally on the head
+    node
+    """
+    return job
+
+
+class constraint(object):  # pylint: disable=invalid-name
     @wraps(object)
     def __init__(self, *args, **kwargs):
         self.args = args
         self.kwargs = kwargs
 
-    def __call__(self, f):
-        @wraps(f)
+    def __call__(self, function):
+        @wraps(function)
         def wrapped_f(*args, **kwargs):
-            return f(*args, **kwargs)
+            return function(*args, **kwargs)
         return wrapped_f
 
-class task(object):
+
+class task(object):  # pylint: disable=invalid-name
     @wraps(object)
     def __init__(self, *args, **kwargs):
         self.args = args
         self.kwargs = kwargs
 
-    def __call__(self, f):
-        @wraps(f)
+    def __call__(self, function):
+        @wraps(function)
         def wrapped_f(*args, **kwargs):
-            return f(*args, **kwargs)
+            return function(*args, **kwargs)
         return wrapped_f
+
 
 # Numbers match both C and Java enums
 class Direction:

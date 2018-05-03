@@ -16,6 +16,8 @@
    limitations under the License.
 """
 
+import sys
+
 """
 This is the logging facility of the mg-tool-api. It is meant to provide
 a unified way for Tools to log information that needs to be read by the
@@ -23,23 +25,21 @@ VRE (e.g. information about progress, errors, exceptions, etc.).
 
 It provides the following commonly used logging levels:
 
-DEBUG:		Detailed information, typically of interest only when
-		diagnosing problems. 
-INFO:		Confirmation that Tool execution is working as expected. 
-WARNING:	An indication that something unexpected happened, but that the
-		Tool can continue working successfully.
-ERROR:		A more serious problem has occurred, and the Tool will not be
-		able to perform some function.
-FATAL:		A serious error, indicating that the Tool may be unable to
-		continue running.  
+DEBUG:   Detailed information, typically of interest only when
+         diagnosing problems.
+INFO:    Confirmation that Tool execution is working as expected.
+WARNING: An indication that something unexpected happened, but that the
+         Tool can continue working successfully.
+ERROR:   A more serious problem has occurred, and the Tool will not be
+         able to perform some function.
+FATAL:   A serious error, indicating that the Tool may be unable to
+         continue running.
 
 As well as the following non-standard levels:
 
-PROGRESS:	Provide the VRE with information about Tool execution progress,
-		in the form of a percentage (0-100)
+PROGRESS: Provide the VRE with information about Tool execution progress,
+          in the form of a percentage (0-100)
 """
-
-import sys
 
 CRITICAL = 50
 FATAL = CRITICAL
@@ -53,16 +53,17 @@ DEBUG = 10
 STDOUT_LEVELS = [DEBUG, INFO, PROGRESS]
 STDERR_LEVELS = [WARNING, ERROR, FATAL, CRITICAL]
 
-_levelNames = {
-    FATAL : 'FATAL',
-    ERROR : 'ERROR',
-    WARNING : 'WARNING',
-    PROGRESS : 'PROGRESS',
-    INFO : 'INFO',
-    DEBUG : 'DEBUG',
-    WARN : 'WARNING',
-    CRITICAL : 'FATAL'
+_levelNames = {  # pylint: disable=invalid-name
+    FATAL: 'FATAL',
+    ERROR: 'ERROR',
+    WARNING: 'WARNING',
+    PROGRESS: 'PROGRESS',
+    INFO: 'INFO',
+    DEBUG: 'DEBUG',
+    WARN: 'WARNING',
+    CRITICAL: 'FATAL'
 }
+
 
 def __log(level, message, *args, **kwargs):
     if level not in _levelNames:
@@ -74,6 +75,7 @@ def __log(level, message, *args, **kwargs):
         _levelNames[level], message.format(*args, **kwargs)))
     return True
 
+
 def debug(message, *args, **kwargs):
     """
     Logs a message with level DEBUG.
@@ -81,9 +83,10 @@ def debug(message, *args, **kwargs):
     'message' is the message format string, and the args are the arguments
     which are merged into msg using the string formatting operator. (Note that
     this means that you can use keywords in the format string, together with a
-    single dictionary argument.) 
+    single dictionary argument.)
     """
     return __log(DEBUG, message, *args, **kwargs)
+
 
 def info(message, *args, **kwargs):
     """
@@ -92,6 +95,7 @@ def info(message, *args, **kwargs):
     """
     return __log(INFO, message, *args, **kwargs)
 
+
 def warn(message, *args, **kwargs):
     """
     Logs a message with level WARNING. The arguments are interpreted as for
@@ -99,7 +103,10 @@ def warn(message, *args, **kwargs):
     """
     return __log(WARNING, message, *args, **kwargs)
 
-warning = warn
+
+# Required for compatibility legacy code
+warning = warn  # pylint: disable=invalid-name
+
 
 def error(message, *args, **kwargs):
     """
@@ -108,24 +115,28 @@ def error(message, *args, **kwargs):
     """
     return __log(ERROR, message, *args, **kwargs)
 
+
 def fatal(message, *args, **kwargs):
     """
     Logs a message with level FATAL. The arguments are interpreted as for
     debug().
     """
     return __log(FATAL, message, *args, **kwargs)
-critical=fatal
 
-## Special loggers
+
+# Required for compatibility legacy code
+critical = fatal  # pylint: disable=invalid-name
+
+
+# Special loggers
 def progress(percentage):
     """
     Provides information about progress.
 
-    In fact it logs a message containing the percentage with level PERCENTAGE. 
+    In fact it logs a message containing the percentage with level PERCENTAGE.
     """
     if percentage > 100:
         percentage = 100
     if percentage < 0:
         percentage = 0
     return __log(PROGRESS, "{}", percentage)
-

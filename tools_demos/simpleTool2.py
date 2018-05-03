@@ -16,6 +16,7 @@
    limitations under the License.
 """
 
+from __future__ import print_function
 import sys
 
 try:
@@ -32,7 +33,7 @@ except ImportError:
 
 from basic_modules.metadata import Metadata
 from basic_modules.tool import Tool
-from utils import logger
+from utils import logger   # pylint: disable=ungrouped-imports
 
 
 # -----------------------------------------------------------------------------
@@ -45,7 +46,7 @@ class SimpleTool2(Tool):
     # @constraint()
     @task(file1=FILE_IN, file2=FILE_IN, file3=FILE_OUT,
           returns=bool, isModifier=False)
-    def sumTwoFiles(self, file1, file2, file3):
+    def sumTwoFiles(self, file1, file2, file3):  # pylint: disable=invalid-name,no-self-use
         """
         Task that merges the contents of two files and returns the value.
         @param file1 The first input file with initial content
@@ -55,38 +56,38 @@ class SimpleTool2(Tool):
         """
         result = 0
         try:
-            with open(file1, 'r+') as f:
-                result += int(f.read())
-                print result
-            with open(file2, 'r+') as f:
-                result += int(f.read())
-            with open(file3, 'w') as f:
-                f.write(str(result))
+            with open(file1, 'r+') as f1_handle:
+                result += int(f1_handle.read())
+                print(result)
+            with open(file2, 'r+') as f2_handle:
+                result += int(f2_handle.read())
+            with open(file3, 'w') as f3_handle:
+                f3_handle.write(str(result))
             return True
-        except:
+        except (IOError, OSError):
             return False
 
-    def run(self, input_files, metadata, output_files):
+    def run(self, input_files, input_metadata, output_files):
         """
         Standard function to call a task
         """
 
         # input and output share most metadata
         output_metadata = Metadata.get_child(
-            metadata["input1"], output_files["output"])
+            input_metadata["input1"], output_files["output"])
 
         # Run the tool 2
         logger.info("SimpleTool2: Running task sumTwoFiles")
-        taskStatus = self.sumTwoFiles(input_files["input1"],
-                                      input_files["input2"],
-                                      output_files["output"])
+        task_status = self.sumTwoFiles(input_files["input1"],
+                                       input_files["input2"],
+                                       output_files["output"])
 
-        if taskStatus:
+        if task_status:
             logger.info("SimpleTool2: run successful")
             return (output_files,
                     {"output": output_metadata})
-        else:
-            logger.fatal("SimpleTool2: run failed")
-            return {}, {}
+
+        logger.fatal("SimpleTool2: run failed")
+        return {}, {}
 
 # ------------------------------------------------------------------------------

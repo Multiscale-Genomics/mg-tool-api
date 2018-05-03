@@ -16,6 +16,7 @@
    limitations under the License.
 """
 
+from __future__ import print_function
 import sys
 
 try:
@@ -32,7 +33,7 @@ except ImportError:
 
 from basic_modules.metadata import Metadata
 from basic_modules.tool import Tool
-from utils import logger
+from utils import logger  # pylint: disable=ungrouped-imports
 
 
 # -----------------------------------------------------------------------------
@@ -46,7 +47,7 @@ class SimpleTool3(Tool):
     # @constraint()
     @task(file1=FILE_IN, file2=FILE_IN, file3=FILE_OUT,
           returns=bool, isModifier=False)
-    def sumTwoFiles(self, file1, file2, file3):
+    def sumTwoFiles(self, file1, file2, file3):  # pylint: disable=invalid-name,no-self-use
         """
         Task that merges the contents of two files and returns the value.
         @param file1 The first input file with initial content
@@ -56,23 +57,23 @@ class SimpleTool3(Tool):
         """
         result = 0
         try:
-            with open(file1, 'r+') as f:
-                result += int(f.read())
-            with open(file2, 'r+') as f:
-                result += int(f.read())
-            with open(file3, 'w') as f:
-                f.write(str(result))
+            with open(file1, 'r+') as f1_handle:
+                result += int(f1_handle.read())
+            with open(file2, 'r+') as f2_handle:
+                result += int(f2_handle.read())
+            with open(file3, 'w') as f3_handle:
+                f3_handle.write(str(result))
             return True
-        except:
+        except (IOError, OSError):
             return False
 
-    def run(self, input_files, metadata, output_files):
+    def run(self, input_files, input_metadata, output_files):
         """
         Standard function to call tasks
         """
 
         # perform checks
-        assert len(input_files["input"]) == len(metadata["input"])
+        assert len(input_files["input"]) == len(input_metadata["input"])
 
         # prepare outputs
         logger.info("SimpleTool3: Preparing outputs")
@@ -83,13 +84,13 @@ class SimpleTool3(Tool):
 
         # Iteratively run the task
         previous_input = input_files["input"][0]
-        previous_metadata = metadata["input"][0]
+        previous_metadata = input_metadata["input"][0]
 
         for i in range(len(input_files["input"]) - 1):
             logger.info("SimpleTool3: Summing input {}", i)
             # Add next input file:
             next_input = input_files["input"][i+1]
-            next_metadata = metadata["input"][i+1]
+            next_metadata = input_metadata["input"][i+1]
             # Pre-calculate output path and metadata
             file_out = output_pattern.format(i)
             metadata_out = Metadata.get_child(
