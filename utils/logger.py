@@ -39,7 +39,7 @@ As well as the following non-standard levels:
 
 PROGRESS: Provide the VRE with information about Tool execution progress,
           in the form of a percentage (0-100)
-"""
+"""  # pylint: disable=pointless-string-statement
 
 CRITICAL = 50
 FATAL = CRITICAL
