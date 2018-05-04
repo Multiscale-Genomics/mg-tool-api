@@ -1,6 +1,6 @@
 # mg-tool-api
 
-[![Documentation Status](https://readthedocs.org/projects/mg-tool-api/badge/?version=latest)](http://mg-tool-api.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/mg-tool-api/badge/?version=latest)](http://mg-tool-api.readthedocs.io/en/latest/?badge=latest) [![Build Status](https://travis-ci.org/Multiscale-Genomics/mg-tool-api.svg?branch=master)](https://travis-ci.org/Multiscale-Genomics/mg-tool-api)
 
 ## Introduction
 This library implements the specifications detailed in the
@@ -19,12 +19,12 @@ VRE.
 
 2. Achieve vertical interoperability by using COMPSs, and allowing
 developers to specify the execution enviroment requirements for each tool by
-using COMPSs "constraints" decorator. Although written with task-based 
-programming in mind, this library allows execution of Tools outside of the 
+using COMPSs "constraints" decorator. Although written with task-based
+programming in mind, this library allows execution of Tools outside of the
 COMPSs runtime.
 
 3. Simplify the construction of workflows, by conceiving tools such that it is
-straightforward to combine them in Workflows; in particular by using COMPSs 
+straightforward to combine them in Workflows; in particular by using COMPSs
 "task" decorator and the COMPSs runtime as the workflow scheduler.
 
 ## Implementation overview
@@ -59,14 +59,14 @@ The 'basic_modules' contains the basic entities of mg-tool-api:
    Class that contains extra information about files.
 
 The 'utils' module contains useful functions for performing common tasks in Tool
-execution. In particular it contains 'logger', the logging facility of mg-tool-api; 
+execution. In particular it contains 'logger', the logging facility of mg-tool-api;
 it provides a unified way of sending messages to the VRE.
 
 See the documentation for the classes for more information.
 
 ## Examples
 
-The "summer_demo.py" and "summer_demo2.py" examples implement workflows using PyCOMPSs. 
-They showcase various functionalities of the library by using the mockup Tools 
+The "summer_demo.py" and "summer_demo2.py" examples implement workflows using PyCOMPSs.
+They showcase various functionalities of the library by using the mockup Tools
 implemented in the tools_demos module.
 
