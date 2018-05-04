@@ -45,7 +45,7 @@ install:
     - if [[ "$TESTENV" == "pylint" ]]; then pip install pylint;fi
 
 before_script :
-    - cd ${HOME}/build/Multiscale-Genomics/mg-process-files
+    - cd ${HOME}/build/Multiscale-Genomics/mg-tool-api
     # - chmod +x scripts/travis/test_runner.sh
     - chmod +x scripts/travis/docs_runner.sh
     - chmod +x scripts/travis/pylint_runner.sh
