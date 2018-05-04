@@ -20,10 +20,10 @@
 # Local Filesystem App
 # -----------------------------------------------------------------------------
 from basic_modules.app import App
-from basic_modules.metadata import Metadata
+from basic_modules.metadata import Metadata  # pylint: disable=unused-import
 
 
-class LocalApp(App):
+class LocalApp(App):  # pylint: disable=too-few-public-methods
     """
     Local Filesystem App.
     """

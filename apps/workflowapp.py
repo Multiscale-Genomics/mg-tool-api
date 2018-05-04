@@ -21,10 +21,10 @@
 # -----------------------------------------------------------------------------
 from apps.localapp import LocalApp
 from apps.pycompssapp import PyCOMPSsApp
-from basic_modules.workflow import Workflow
+from basic_modules.workflow import Workflow  # pylint: disable=unused-import
 
 
-class WorkflowApp(PyCOMPSsApp, LocalApp):
+class WorkflowApp(PyCOMPSsApp, LocalApp):  # pylint: disable=too-few-public-methods
     """
     Workflow-aware App.
 

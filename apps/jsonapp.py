@@ -35,7 +35,11 @@ class JSONApp(WorkflowApp):  # pylint: disable=too-few-public-methods
 
     """
 
-    def launch(self, tool_class,
+    # The arguments deffer between this function and the supeclass in
+    # basic_modules.app to provide a common interface and so that the JSON
+    # configuration files can be provided to generate the parameters required
+    # by App.
+    def launch(self, tool_class,  # pylint: disable=too-many-locals,arguments-differ
                config_path, input_metadata_path, output_metadata_path):
         """
         Run a Tool with the specified inputs and configuration.
@@ -67,7 +71,9 @@ class JSONApp(WorkflowApp):  # pylint: disable=too-few-public-methods
         >>> import App, Tool
         >>> app = JSONApp()
         >>> # expects to find valid config.json and input_metadata.json
-        >>> app.launch(Tool, "/path/to/config.json", "/path/to/input_metadata.json", "/path/to/results.json")
+        >>> app.launch(
+        ...     Tool, "/path/to/config.json",
+        ...     "/path/to/input_metadata.json", "/path/to/results.json")
         >>> # writes /path/to/results.json
         """
 
@@ -105,7 +111,7 @@ class JSONApp(WorkflowApp):  # pylint: disable=too-few-public-methods
             output_files, output_metadata,
             output_metadata_path)
 
-    def _read_config(self, json_path):
+    def _read_config(self, json_path):  # pylint: disable=no-self-use
         """
         Read config.json to obtain:
         input_ids: dict containing IDs of tool input files
@@ -144,7 +150,7 @@ class JSONApp(WorkflowApp):  # pylint: disable=too-few-public-methods
 
         return input_ids, arguments, output_files
 
-    def _read_metadata(self, json_path):
+    def _read_metadata(self, json_path):  # pylint: disable=no-self-use
         """
         Read input_metadata.json to obtain input_metadata_ids, a dict
         containing metadata on each of the tool input files,
@@ -154,7 +160,6 @@ class JSONApp(WorkflowApp):  # pylint: disable=too-few-public-methods
         """
         metadata = json.load(file(json_path))
         input_metadata = {}
-        input_source_ids = {}
         for input_file in metadata:
             input_id = input_file["_id"]
             input_metadata[input_id] = Metadata(
@@ -167,8 +172,8 @@ class JSONApp(WorkflowApp):  # pylint: disable=too-few-public-methods
             )
         return input_metadata
 
-    def _write_results(self,
-                       input_files, input_metadata,
+    def _write_results(self,  # pylint: disable=no-self-use,too-many-arguments
+                       input_files, input_metadata,  # pylint: disable=unused-argument
                        output_files, output_metadata, json_path):
         """
         Write results.json using information from input_files and output_files:
@@ -191,6 +196,7 @@ class JSONApp(WorkflowApp):  # pylint: disable=too-few-public-methods
         For more information see the schema for results.json.
         """
         results = []
+
         def _newresult(role, path, metadata):
             return {
                 "name": role,
@@ -205,9 +211,10 @@ class JSONApp(WorkflowApp):  # pylint: disable=too-few-public-methods
         for role, path in output_files.items():
             metadata = output_metadata[role]
             if isinstance(path, (list, tuple)):  # check allow_multiple?
-                assert (isinstance(metadata, (list, tuple)) and \
-                        len(metadata) == len(path)) or \
-                        isinstance(metadata, Metadata), \
+                assert (
+                    isinstance(metadata, (list, tuple)) and
+                    len(metadata) == len(path)
+                ) or isinstance(metadata, Metadata), \
                         """Wrong number of metadata entries for role {role}:
 either 1 or {np}, not {nm}""".format(role=role, np=len(path), nm=len(metadata))
 
