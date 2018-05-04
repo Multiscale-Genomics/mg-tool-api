@@ -16,6 +16,12 @@
    limitations under the License.
 """
 
+from basic_modules.workflow import Workflow
+from tools_demos.simpleTool1 import SimpleTool1
+from tools_demos.simpleTool2 import SimpleTool2
+from utils import remap
+from utils import logger
+
 """
 Simple example of Workflow using PyCOMPSs, called using an App.
 
@@ -43,13 +49,8 @@ Simple example of Workflow using PyCOMPSs, called using an App.
   unstage intermediate outputs.
 """
 
-from basic_modules.workflow import Workflow
-from tools_demos.simpleTool1 import SimpleTool1
-from tools_demos.simpleTool2 import SimpleTool2
-from utils import remap
-from utils import logger
 
-class SimpleWorkflow(Workflow):
+class SimpleWorkflow(Workflow):  # pylint: disable=too-few-public-methods
     """
     input1		input2
       |			  |
@@ -64,7 +65,7 @@ class SimpleWorkflow(Workflow):
 
     configuration = {}
 
-    def __init__(self, configuration={}):
+    def __init__(self, configuration=None):
         """
         Initialise the tool with its configuration.
 
@@ -75,55 +76,57 @@ class SimpleWorkflow(Workflow):
             a dictionary containing parameters that define how the operation
             should be carried out, which are specific to each Tool.
         """
+        if configuration is None:
+            configuration = {}
+
         self.configuration.update(configuration)
 
-    def run(self, input_files, input_metadata, output_files):
+    def run(self, input_files, metadata, output_files):
 
         logger.info("\t0. perform checks")
         assert len(input_files.keys()) == 2
-        assert len(input_metadata.keys()) == 2
-        output = output_files["output"]
+        assert len(metadata.keys()) == 2
 
         logger.info("\t1.a Instantiate Tool 1 and run")
-        simpleTool1 = SimpleTool1(self.configuration)
+        simple_tool1 = SimpleTool1(self.configuration)
 
         try:
-            output1, outmd1 = simpleTool1.run(
+            output1, outmd1 = simple_tool1.run(
                 # Use remap to convert role "number1" to "input" for simpleTool1
                 remap(input_files, input="number1"),
-                remap(input_metadata, input="number1"),
+                remap(metadata, input="number1"),
                 # Use a temporary file name for intermediate outputs
                 {"output": 'file1.out'})
-        except Exception as e:
-            logger.fatal("Tool 1, run 1 failed: {}", e)
+        except Exception as err:
+            logger.fatal("Tool 1, run 1 failed: {}", err)
             return {}, {}
         logger.progress(50)  # out of 100
 
         logger.info("\t1.b (Instantiate Tool) and run")
         try:
-            output2, outmd2 = simpleTool1.run(
+            output2, outmd2 = simple_tool1.run(
                 # Use remap to convert role "number2" to "input" for simpleTool1
                 remap(input_files, input="number2"),
-                remap(input_metadata, input="number2"),
+                remap(metadata, input="number2"),
                 # Use a temporary file name for intermediate outputs
                 {"output": 'file2.out'})
-        except Exception as e:
-            logger.fatal("Tool 1, run 2 failed: {}", e)
-            return {}, {}            
+        except Exception as err:
+            logger.fatal("Tool 1, run 2 failed: {}", err)
+            return {}, {}
         logger.progress(75)  # out of 100
 
         logger.info("\t2. Instantiate Tool and run")
-        simpleTool2 = SimpleTool2(self.configuration)
+        simple_tool2 = SimpleTool2(self.configuration)
         try:
-            output3, outmd3 = simpleTool2.run(
+            output3, outmd3 = simple_tool2.run(
                 # Instead of using remap, here we re-build dicts to convert input roles
                 {"input1": output1["output"], "input2": output2["output"]},
                 {"input1": outmd1["output"], "input2": outmd2["output"]},
                 # Workflow output files are from this Tool
                 output_files)
-        except Exception as e:
-            logger.fatal("Tool 2 failed: {}", e)
-            return {}, {}            
+        except Exception as err:
+            logger.fatal("Tool 2 failed: {}", err)
+            return {}, {}
         logger.progress(100)  # out of 100
 
         logger.info("\t4. Optionally edit the output metadata")
@@ -171,7 +174,7 @@ def main_json():
 
     # 2. The App has finished
     logger.info("2. Execution finished; see /tmp/results.json")
-    
+
 
 if __name__ == "__main__":
     # Note that the code that was within this if condition has been moved

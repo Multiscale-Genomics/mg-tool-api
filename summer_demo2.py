@@ -16,6 +16,11 @@
    limitations under the License.
 """
 
+from basic_modules.workflow import Workflow
+from tools_demos.simpleTool1 import SimpleTool1
+from tools_demos.simpleTool3 import SimpleTool3
+from utils import logger
+
 """
 Simple example of Workflow using PyCOMPSs, called using an App.
 
@@ -48,14 +53,8 @@ Simple example of Workflow using PyCOMPSs, called using an App.
   unstage intermediate outputs.
 """
 
-from basic_modules.workflow import Workflow
-from tools_demos.simpleTool1 import SimpleTool1
-from tools_demos.simpleTool3 import SimpleTool3
-from utils import remap
-from utils import logger
 
-
-class SimpleWorkflow(Workflow):
+class SimpleWorkflow(Workflow):  # pylint: disable=too-few-public-methods
     """
       1           2            3           ...
       |           |            |            |
@@ -72,7 +71,7 @@ class SimpleWorkflow(Workflow):
 
     configuration = {}
 
-    def __init__(self, configuration={}):
+    def __init__(self, configuration=None):
         """
         Initialise the tool with its configuration.
 
@@ -83,14 +82,18 @@ class SimpleWorkflow(Workflow):
             a dictionary containing parameters that define how the operation
             should be carried out, which are specific to each Tool.
         """
+
+        if configuration is None:
+            configuration = {}
+
         self.configuration.update(configuration)
 
-    def run(self, input_files, input_metadata, output_files):
+    def run(self, input_files, metadata, output_files):  # pylint: disable=too-many-locals
 
         logger.info("\t0. perform checks")
         assert len(input_files.keys()) == 1
-        assert len(input_metadata.keys()) == 1
-        assert len(input_files["number"]) == len(input_metadata["number"])
+        assert len(metadata.keys()) == 1
+        assert len(input_files["number"]) == len(metadata["number"])
 
         # Prepare lists to collect outputs of first step
         outputs = []
@@ -98,32 +101,32 @@ class SimpleWorkflow(Workflow):
 
         # Run through inputs and apply SimpleTool1 to each
         logger.info("\t1.a Instantiate Tool1")
-        simpleTool1 = SimpleTool1(self.configuration)
+        simple_tool1 = SimpleTool1(self.configuration)
 
         for i, path in enumerate(input_files["number"]):
-            metadata = input_metadata["number"][i]
+            input_metadata = metadata["number"][i]
             logger.info("\t1.b run {}".format(i))
             try:
-                output, outmd = simpleTool1.run(
+                output, outmd = simple_tool1.run(
                     {"input": path},
-                    {"input": metadata},
+                    {"input": input_metadata},
                     {"output": path + '.out'})
                 outputs.append(output["output"])
                 out_mds.append(outmd["output"])
-            except Exception as e:
-                logger.error("Tool 1, run {} failed: {}", i, e)
+            except Exception as err:
+                logger.error("Tool 1, run {} failed: {}", i, err)
             logger.progress(75 * i / len(input_files["number"]))
         logger.info("\t2. Instantiate Tool and run")
 
         # Apply SimpleTool3 to all outputs of first step
-        simpleTool3 = SimpleTool3(self.configuration)
+        simple_tool3 = SimpleTool3(self.configuration)
         try:
-            output3, outmd3 = simpleTool3.run(
+            output3, outmd3 = simple_tool3.run(
                 {"input": outputs},
                 {"input": out_mds},
                 output_files)
-        except Exception as e:
-            logger.fatal("Tool 2 failed: {}", e)
+        except Exception as err:   # pylint: disable=broad-except
+            logger.fatal("Tool 2 failed: {}", err)
             return {}, {}
         logger.progress(100)
 
@@ -134,7 +137,7 @@ class SimpleWorkflow(Workflow):
 
 # -----------------------------------------------------------------------------
 
-def main(inputFiles, inputMetadata, outputFiles):
+def main(input_files, input_metadata, output_files):
     """
     Main function
     -------------
@@ -146,11 +149,13 @@ def main(inputFiles, inputMetadata, outputFiles):
     logger.info("1. Instantiate and launch the App")
     from apps.workflowapp import WorkflowApp
     app = WorkflowApp()
-    result = app.launch(SimpleWorkflow, inputFiles, inputMetadata,
-                        outputFiles, {})
+    result = app.launch(SimpleWorkflow, input_files, input_metadata,
+                        output_files, {})
 
     # 2. The App has finished
     logger.info("2. Execution finished")
+
+    return result
 
 
 def main_json():
@@ -172,23 +177,25 @@ def main_json():
 
     # 2. The App has finished
     logger.info("2. Execution finished; see /tmp/results.json")
-    
+
+    return result
+
 
 if __name__ == "__main__":
 
-    inputFile1 = "/tmp/file1"
-    inputFile2 = "/tmp/file2"
-    inputFile3 = "/tmp/file3"
-    outputFile = "/tmp/outputFile{}"  # allow_multiple = True
+    INPUT_FILE_1 = "/tmp/file1"
+    INPUT_FILE_2 = "/tmp/file2"
+    INPUT_FILE_3 = "/tmp/file3"
+    OUTPUT_FILE = "/tmp/outputFile{}"  # allow_multiple = True
 
     # The VRE has to prepare the data to be processed.
     # In this example we create 2 files for testing purposes.
     logger.info("1. Create some data: 2 input files")
-    with open(inputFile1, "w") as f:
+    with open(INPUT_FILE_1, "w") as f:
         f.write("5")
-    with open(inputFile2, "w") as f:
+    with open(INPUT_FILE_2, "w") as f:
         f.write("9")
-    with open(inputFile3, "w") as f:
+    with open(INPUT_FILE_3, "w") as f:
         f.write("13")
     logger.info("\t* Files successfully created")
 
@@ -196,12 +203,12 @@ if __name__ == "__main__":
     from basic_modules.metadata import Metadata
     # Maybe it is necessary to prepare a metadata parser from json file
     # when building the Metadata objects.
-    inputMetadataF1 = Metadata("Number", "plainText")
-    inputMetadataF2 = Metadata("Number", "plainText")
-    inputMetadataF3 = Metadata("Number", "plainText")
+    INPUT_METADATA_F1 = Metadata("Number", "plainText")
+    INPUT_METADATA_F2 = Metadata("Number", "plainText")
+    INPUT_METADATA_F3 = Metadata("Number", "plainText")
 
-    main({"number": [inputFile1, inputFile2, inputFile3]},
-         {"number": [inputMetadataF1, inputMetadataF2, inputMetadataF3]},
-         {"output": outputFile})
+    main({"number": [INPUT_FILE_1, INPUT_FILE_2, INPUT_FILE_3]},
+         {"number": [INPUT_METADATA_F1, INPUT_METADATA_F2, INPUT_METADATA_F3]},
+         {"output": OUTPUT_FILE})
 
     main_json()
