@@ -16,57 +16,46 @@
    limitations under the License.
 """
 
+from __future__ import print_function
+
+from basic_modules.metadata import Metadata
 from basic_modules.workflow import Workflow
 from tools_demos.simpleTool1 import SimpleTool1
 from tools_demos.simpleTool3 import SimpleTool3
 from utils import logger
 
-"""
-Simple example of Workflow using PyCOMPSs, called using an App.
 
-- SimpleTool1:
-  reads an integer from a file, increments it, and writes it to file
-- SimpleTool3:
-  reads N integers from N files and cumulatively sums them, writing
-  each intermediate result to file; for example, if 4 files are input
-  (A, B, C, D), then 3 files are output: O1 = A+B, O2 = O1+C, O3 = O2+D.
-- SimpleWorkflow:
-  implements the following workflow:
-
-      1           2            3           ...
-      |           |            |            |
- SimpleTool1  SimpleTool1  SimpleTool1  SimpleTool1
-      |           |            |            |
-      +-----------+------.-----+------------+
-                         |
-                    SimpleTool3
-                         |
-             +-----------+-----------+
-             |           |           |
-             4           5          ...
-
-  Where 1, 2, 3, ... are a variable number of inputs; 4, 5, ... are
-  a variable number of outputs, and SimpleTool1 and SimpleTool3 are
-  defined above.
-
-  The "main()" uses the WorkflowApp to launch SimpleWorkflow in order to
-  unstage intermediate outputs.
-"""
-
-
-class SimpleWorkflow(Workflow):  # pylint: disable=too-few-public-methods
+class SimpleWorkflow2(Workflow):  # pylint: disable=too-few-public-methods
     """
-      1           2            3           ...
-      |           |            |            |
- SimpleTool1  SimpleTool1  SimpleTool1  SimpleTool1
-      |           |            |            |
-      +-----------+------.-----+------------+
-                         |
-                    SimpleTool3
-                         |
-             +-----------+-----------+
-             |           |           |
-             4           5          ...
+    Simple example of Workflow using PyCOMPSs, called using an App.
+
+    - SimpleTool1:
+      reads an integer from a file, increments it, and writes it to file
+    - SimpleTool3:
+      reads N integers from N files and cumulatively sums them, writing
+      each intermediate result to file; for example, if 4 files are input
+      (A, B, C, D), then 3 files are output: O1 = A+B, O2 = O1+C, O3 = O2+D.
+    - SimpleWorkflow:
+      implements the following workflow:
+
+          1           2            3           ...
+          |           |            |            |
+     SimpleTool1  SimpleTool1  SimpleTool1  SimpleTool1
+          |           |            |            |
+          +-----------+------.-----+------------+
+                             |
+                        SimpleTool3
+                             |
+                 +-----------+-----------+
+                 |           |           |
+                 4           5          ...
+
+      Where 1, 2, 3, ... are a variable number of inputs; 4, 5, ... are
+      a variable number of outputs, and SimpleTool1 and SimpleTool3 are
+      defined above.
+
+      The "main()" uses the WorkflowApp to launch SimpleWorkflow in order to
+      unstage intermediate outputs.
     """
 
     configuration = {}
@@ -113,7 +102,7 @@ class SimpleWorkflow(Workflow):  # pylint: disable=too-few-public-methods
                     {"output": path + '.out'})
                 outputs.append(output["output"])
                 out_mds.append(outmd["output"])
-            except Exception as err:
+            except Exception as err:  # pylint: disable=broad-except
                 logger.error("Tool 1, run {} failed: {}", i, err)
             logger.progress(75 * i / len(input_files["number"]))
         logger.info("\t2. Instantiate Tool and run")
@@ -149,7 +138,7 @@ def main(input_files, input_metadata, output_files):
     logger.info("1. Instantiate and launch the App")
     from apps.workflowapp import WorkflowApp
     app = WorkflowApp()
-    result = app.launch(SimpleWorkflow, input_files, input_metadata,
+    result = app.launch(SimpleWorkflow2, input_files, input_metadata,
                         output_files, {})
 
     # 2. The App has finished
@@ -170,7 +159,7 @@ def main_json():
     logger.info("1. Instantiate and launch the App")
     from apps.jsonapp import JSONApp
     app = JSONApp()
-    result = app.launch(SimpleWorkflow,
+    result = app.launch(SimpleWorkflow2,
                         "tools_demos/config2.json",
                         "tools_demos/input_metadata2.json",
                         "/tmp/results.json")
@@ -199,8 +188,6 @@ if __name__ == "__main__":
         f.write("13")
     logger.info("\t* Files successfully created")
 
-    # Read metadata file and build a dictionary with the metadata:
-    from basic_modules.metadata import Metadata
     # Maybe it is necessary to prepare a metadata parser from json file
     # when building the Metadata objects.
     INPUT_METADATA_F1 = Metadata("Number", "plainText")
