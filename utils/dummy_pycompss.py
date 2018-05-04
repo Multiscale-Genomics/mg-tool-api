@@ -50,7 +50,10 @@ def local(job):
     return job
 
 
-class constraint(object):  # pylint: disable=invalid-name
+class constraint(object):  # pylint: disable=invalid-name,too-few-public-methods
+    """
+    Dummy function for handling the contraint decorators
+    """
     @wraps(object)
     def __init__(self, *args, **kwargs):
         self.args = args
@@ -59,11 +62,18 @@ class constraint(object):  # pylint: disable=invalid-name
     def __call__(self, function):
         @wraps(function)
         def wrapped_f(*args, **kwargs):
+            """
+            Function wrapper for the decorator
+            """
             return function(*args, **kwargs)
         return wrapped_f
 
 
-class task(object):  # pylint: disable=invalid-name
+class task(object):  # pylint: disable=invalid-name,too-few-public-methods
+    """
+    Dummy function for handling the task decorators
+    """
+
     @wraps(object)
     def __init__(self, *args, **kwargs):
         self.args = args
@@ -72,19 +82,28 @@ class task(object):  # pylint: disable=invalid-name
     def __call__(self, function):
         @wraps(function)
         def wrapped_f(*args, **kwargs):
+            """
+            Function wrapper for the decorator
+            """
             return function(*args, **kwargs)
         return wrapped_f
 
 
 # Numbers match both C and Java enums
-class Direction:
-    IN = 0
+class Direction(object):  # pylint: disable=too-few-public-methods
+    """
+    Dummy function for handling the direction for the movement of files
+    """
+    IN = 0  # pylint: disable=invalid-name
     OUT = 1
     INOUT = 2
 
 
 # Numbers match both C and Java enums
-class Type:
+class Type(object):  # pylint: disable=too-few-public-methods
+    """
+    Dummy function to determine the object types that are being handled
+    """
     FILE = 0
     BOOLEAN = 1
     STRING = 3
@@ -95,7 +114,10 @@ class Type:
     # COMPLEX = 8
 
 
-class Parameter:
+class Parameter(object):  # pylint: disable=too-few-public-methods
+    """
+    Dummy function for the collective handling of parameters
+    """
     @wraps(object)
     def __init__(self, p_type=None, p_direction=Direction.IN):
         self.type = p_type
