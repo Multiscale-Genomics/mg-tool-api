@@ -13,28 +13,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
-.. MG Tools API documentation master file, created by
-   sphinx-quickstart on Mon Jun 19 09:57:07 2017.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Architectural Design Record
+===========================
 
-Welcome to MG Tools API's documentation!
-========================================
+2018-05-31 - Logger PROGRESS functionality
+------------------------------------------
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
-   install
-   tools-api
-   utils
-   adr
-
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+The original use of the PROGRESS was just to report a percentage level for how compelete a pipeline was. This is difficult to estimate and maintain especially if there are a number of tools that are bundled into a pipeline. The functionality has not changed to displaying along with message, extra parameters can ber specified to include either the number of jobs completed out of a total number, whether it is RUNNING or DONE.
