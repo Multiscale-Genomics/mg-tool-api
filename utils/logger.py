@@ -35,8 +35,7 @@ FATAL:		A serious error, indicating that the Tool may be unable to
 
 As well as the following non-standard levels:
 
-PROGRESS:	Provide the VRE with information about Tool execution progress,
-		in the form of a percentage (0-100)
+PROGRESS:	Provide the VRE with information about Tool execution progress
 """
 
 import sys
@@ -120,9 +119,23 @@ critical=fatal
 ## Special loggers
 def progress(message, *args, **kwargs):
     """
-    Provides information about progress.
+    Provides information about Tool progress.
 
-    In fact it logs a message containing the percentage with level PERCENTAGE.
+    Logs a message containing information about Tool progress, with level
+    PROGRESS.
+
+    The arguments are interpreted as for debug() (see below for exceptions).
+
+    This function provides two pre-baked log message formats, that can be
+    activated by specifying the following items in **kwargs:
+
+
+        status : Status of the Tool
+            logs "MESSAGE - STATUS"
+
+
+        task_id : Current task; requires also the "total" item
+            logs "MESSAGE (TASK_ID/TOTAL)
     """
     if "status" in kwargs:
         __log(PROGRESS, "{} - {}", message, kwargs["status"])
