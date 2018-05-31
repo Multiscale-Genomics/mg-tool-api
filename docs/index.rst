@@ -28,7 +28,6 @@ Welcome to MG Tools API's documentation!
    install
    tools-api
    utils
-   adr
 
 
 
