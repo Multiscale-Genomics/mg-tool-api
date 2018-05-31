@@ -20,6 +20,56 @@ import pytest
 from utils import logger
 
 
+@pytest.mark.debug
+def test_debug(capsys):
+    """
+    Test the basic use of the DEBUG function
+    """
+    logger.debug("test")
+    captured = capsys.readouterr()
+    assert captured[0] == "DEBUG: test\n"
+
+
+@pytest.mark.info
+def test_info(capsys):
+    """
+    Test the basic use of the INFO function
+    """
+    logger.info("test")
+    captured = capsys.readouterr()
+    assert captured[0] == "INFO: test\n"
+
+
+@pytest.mark.warn
+def test_warn(capsys):
+    """
+    Test the basic use of the WARN function
+    """
+    logger.warn("test")
+    captured = capsys.readouterr()
+    assert captured[1] == "WARNING: test\n"
+
+
+@pytest.mark.error
+def test_error(capsys):
+    """
+    Test the basic use of the ERROR function
+    """
+    logger.error("test")
+    captured = capsys.readouterr()
+    assert captured[1] == "ERROR: test\n"
+
+
+@pytest.mark.fatal
+def test_fatal(capsys):
+    """
+    Test the basic use of the FATAL function
+    """
+    logger.fatal("test")
+    captured = capsys.readouterr()
+    assert captured[1] == "FATAL: test\n"
+
+
 @pytest.mark.progress
 def test_progress_00(capsys):
     """
