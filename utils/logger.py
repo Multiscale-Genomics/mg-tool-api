@@ -136,6 +136,30 @@ def progress(message, *args, **kwargs):
 
         task_id : Current task; requires also the "total" item
             logs "MESSAGE (TASK_ID/TOTAL)
+
+
+    Example
+    -------
+    .. code-block:: python
+       :linenos:
+
+       class TestTool(Tool):
+           # ...
+           def run(self, input_files, input_metadata, output_files):
+               logger.progress("TestTool starting", status="RUNNING")
+               total_tasks = 3
+
+               self.task1()
+               logger.progress("TestTool", task_id=1, total=total_tasks)
+
+               self.task2()
+               logger.progress("TestTool", task_id=2, total=total_tasks)
+
+               self.task3()
+               logger.progress("TestTool", task_id=3, total=total_tasks)
+
+               logger.progress("TestTool", status="DONE")
+               return True
     """
     if "status" in kwargs:
         return __log(PROGRESS, "{} - {}", message, kwargs["status"])
