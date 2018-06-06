@@ -12,6 +12,14 @@ Author: WHO?
 - Change N.
 
 **********
+31/05/2018
+**********
+Author: Mark McDowall
+
+- Added Tests for the logger
+- Changed the functionality of the PROGRESS logger so that it is more flexible and can be used within the VRE
+
+**********
 26/10/2017
 **********
 Author: Marco Pasi

@@ -24,19 +24,18 @@ VRE (e.g. information about progress, errors, exceptions, etc.).
 It provides the following commonly used logging levels:
 
 DEBUG:		Detailed information, typically of interest only when
-		diagnosing problems. 
-INFO:		Confirmation that Tool execution is working as expected. 
+		diagnosing problems.
+INFO:		Confirmation that Tool execution is working as expected.
 WARNING:	An indication that something unexpected happened, but that the
 		Tool can continue working successfully.
 ERROR:		A more serious problem has occurred, and the Tool will not be
 		able to perform some function.
 FATAL:		A serious error, indicating that the Tool may be unable to
-		continue running.  
+		continue running.
 
 As well as the following non-standard levels:
 
-PROGRESS:	Provide the VRE with information about Tool execution progress,
-		in the form of a percentage (0-100)
+PROGRESS:	Provide the VRE with information about Tool execution progress
 """
 
 import sys
@@ -54,15 +53,16 @@ STDOUT_LEVELS = [DEBUG, INFO, PROGRESS]
 STDERR_LEVELS = [WARNING, ERROR, FATAL, CRITICAL]
 
 _levelNames = {
-    FATAL : 'FATAL',
-    ERROR : 'ERROR',
-    WARNING : 'WARNING',
-    PROGRESS : 'PROGRESS',
-    INFO : 'INFO',
-    DEBUG : 'DEBUG',
-    WARN : 'WARNING',
-    CRITICAL : 'FATAL'
+    FATAL: 'FATAL',
+    ERROR: 'ERROR',
+    WARNING: 'WARNING',
+    PROGRESS: 'PROGRESS',
+    INFO: 'INFO',
+    DEBUG: 'DEBUG',
+    WARN: 'WARNING',
+    CRITICAL: 'FATAL'
 }
+
 
 def __log(level, message, *args, **kwargs):
     if level not in _levelNames:
@@ -81,7 +81,7 @@ def debug(message, *args, **kwargs):
     'message' is the message format string, and the args are the arguments
     which are merged into msg using the string formatting operator. (Note that
     this means that you can use keywords in the format string, together with a
-    single dictionary argument.) 
+    single dictionary argument.)
     """
     return __log(DEBUG, message, *args, **kwargs)
 
@@ -117,15 +117,55 @@ def fatal(message, *args, **kwargs):
 critical=fatal
 
 ## Special loggers
-def progress(percentage):
+def progress(message, *args, **kwargs):
     """
-    Provides information about progress.
+    Provides information about Tool progress.
 
-    In fact it logs a message containing the percentage with level PERCENTAGE. 
+    Logs a message containing information about Tool progress, with level
+    PROGRESS.
+
+    The arguments are interpreted as for debug() (see below for exceptions).
+
+    This function provides two pre-baked log message formats, that can be
+    activated by specifying the following items in **kwargs:
+
+
+        status : Status of the Tool
+            logs "MESSAGE - STATUS"
+
+
+        task_id : Current task; requires also the "total" item
+            logs "MESSAGE (TASK_ID/TOTAL)
+
+
+    Example
+    -------
+    .. code-block:: python
+       :linenos:
+
+       class TestTool(Tool):
+           # ...
+           def run(self, input_files, input_metadata, output_files):
+               logger.progress("TestTool starting", status="RUNNING")
+               total_tasks = 3
+
+               self.task1()
+               logger.progress("TestTool", task_id=1, total=total_tasks)
+
+               self.task2()
+               logger.progress("TestTool", task_id=2, total=total_tasks)
+
+               self.task3()
+               logger.progress("TestTool", task_id=3, total=total_tasks)
+
+               logger.progress("TestTool", status="DONE")
+               return True
     """
-    if percentage > 100:
-        percentage = 100
-    if percentage < 0:
-        percentage = 0
-    return __log(PROGRESS, "{}", percentage)
+    if "status" in kwargs:
+        return __log(PROGRESS, "{} - {}", message, kwargs["status"])
+    elif "task_id" in kwargs:
+        return __log(PROGRESS, "{} ({}/{})", message, kwargs["task_id"], kwargs["total"])
+    else:
+        return __log(PROGRESS, message, *args, **kwargs)
+    return False
 
