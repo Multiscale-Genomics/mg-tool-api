@@ -128,7 +128,7 @@ def fatal(message, *args, **kwargs):
 critical = fatal  # pylint: disable=invalid-name
 
 
-## Special loggers
+# Special loggers
 def progress(message, *args, **kwargs):
     """
     Provides information about Tool progress.
@@ -177,6 +177,5 @@ def progress(message, *args, **kwargs):
         return __log(PROGRESS, "{} - {}", message, kwargs["status"])
     elif "task_id" in kwargs:
         return __log(PROGRESS, "{} ({}/{})", message, kwargs["task_id"], kwargs["total"])
-    else:
-        return __log(PROGRESS, message, *args, **kwargs)
-    return False
+
+    return __log(PROGRESS, message, *args, **kwargs)
