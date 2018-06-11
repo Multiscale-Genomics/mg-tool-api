@@ -37,8 +37,7 @@ FATAL:   A serious error, indicating that the Tool may be unable to
 
 As well as the following non-standard levels:
 
-PROGRESS: Provide the VRE with information about Tool execution progress,
-          in the form of a percentage (0-100)
+PROGRESS: Provide the VRE with information about Tool execution progress.
 """  # pylint: disable=pointless-string-statement
 
 
@@ -157,6 +156,7 @@ def progress(message, *args, **kwargs):
 
     Example
     -------
+
     .. code-block:: python
        :linenos:
 
@@ -176,6 +176,7 @@ def progress(message, *args, **kwargs):
 
                logger.progress("TestTool", status="DONE")
                return True
+
     """
     if "status" in kwargs:
         return __log(PROGRESS, "{} - {}", message, kwargs["status"])
