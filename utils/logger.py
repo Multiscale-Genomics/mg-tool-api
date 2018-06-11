@@ -41,6 +41,7 @@ PROGRESS: Provide the VRE with information about Tool execution progress,
           in the form of a percentage (0-100)
 """  # pylint: disable=pointless-string-statement
 
+
 CRITICAL = 50
 FATAL = CRITICAL
 ERROR = 40
@@ -123,20 +124,59 @@ def fatal(message, *args, **kwargs):
     """
     return __log(FATAL, message, *args, **kwargs)
 
-
 # Required for compatibility legacy code
 critical = fatal  # pylint: disable=invalid-name
 
 
-# Special loggers
-def progress(percentage):
+## Special loggers
+def progress(message, *args, **kwargs):
     """
-    Provides information about progress.
+    Provides information about Tool progress.
 
-    In fact it logs a message containing the percentage with level PERCENTAGE.
+    Logs a message containing information about Tool progress, with level
+    PROGRESS.
+
+    The arguments are interpreted as for debug() (see below for exceptions).
+
+    This function provides two pre-baked log message formats, that can be
+    activated by specifying the following items in **kwargs:
+
+
+        status : Status of the Tool
+            logs "MESSAGE - STATUS"
+
+
+        task_id : Current task; requires also the "total" item
+            logs "MESSAGE (TASK_ID/TOTAL)
+
+
+    Example
+    -------
+    .. code-block:: python
+       :linenos:
+
+       class TestTool(Tool):
+           # ...
+           def run(self, input_files, input_metadata, output_files):
+               logger.progress("TestTool starting", status="RUNNING")
+               total_tasks = 3
+
+               self.task1()
+               logger.progress("TestTool", task_id=1, total=total_tasks)
+
+               self.task2()
+               logger.progress("TestTool", task_id=2, total=total_tasks)
+
+               self.task3()
+               logger.progress("TestTool", task_id=3, total=total_tasks)
+
+               logger.progress("TestTool", status="DONE")
+               return True
     """
-    if percentage > 100:
-        percentage = 100
-    if percentage < 0:
-        percentage = 0
-    return __log(PROGRESS, "{}", percentage)
+    if "status" in kwargs:
+        return __log(PROGRESS, "{} - {}", message, kwargs["status"])
+    elif "task_id" in kwargs:
+        return __log(PROGRESS, "{} ({}/{})", message, kwargs["task_id"], kwargs["total"])
+    else:
+        return __log(PROGRESS, message, *args, **kwargs)
+    return False
