@@ -24,7 +24,7 @@ python:
 env:
     matrix:
         - TESTENV=docs
-        # - TESTENV=code
+        - TESTENV=code
         - TESTENV=pylint
 
 addons:
