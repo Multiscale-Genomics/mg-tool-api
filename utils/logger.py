@@ -141,14 +141,19 @@ def progress(message, *args, **kwargs):
     This function provides two pre-baked log message formats, that can be
     activated by specifying the following items in **kwargs:
 
+    Parameters
+    ----------
+    status : str
+        Status of the Tool
+        logs "MESSAGE - STATUS"
 
-        status : Status of the Tool
-            logs "MESSAGE - STATUS"
+    task_id : int
+        Current task; requires also the "total" item
+        logs "MESSAGE (TASK_ID/TOTAL)
 
-
-        task_id : Current task; requires also the "total" item
-            logs "MESSAGE (TASK_ID/TOTAL)
-
+    total : int
+        Total number of tasks, should be provided in conjunction with task_id
+        logs "MESSAGE (TASK_ID/TOTAL)
 
     Example
     -------
@@ -156,7 +161,6 @@ def progress(message, *args, **kwargs):
        :linenos:
 
        class TestTool(Tool):
-           # ...
            def run(self, input_files, input_metadata, output_files):
                logger.progress("TestTool starting", status="RUNNING")
                total_tasks = 3
