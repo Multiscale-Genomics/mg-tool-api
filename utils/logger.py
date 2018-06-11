@@ -133,12 +133,12 @@ def progress(message, *args, **kwargs):
     Provides information about Tool progress.
 
     Logs a message containing information about Tool progress, with level
-    PROGRESS.
+    ``PROGRESS``.
 
-    The arguments are interpreted as for debug() (see below for exceptions).
+    The arguments are interpreted as for ``debug()`` (see below for exceptions).
 
     This function provides two pre-baked log message formats, that can be
-    activated by specifying the following items in **kwargs:
+    activated by specifying the following items in ``**kwargs``:
 
     Parameters
     ----------
