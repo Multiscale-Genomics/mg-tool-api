@@ -53,5 +53,6 @@ before_script :
 # command to run tests
 script:
     # - if [[ "$TESTENV" == "code" ]]; then ./scripts/travis/test_runner.sh; fi
+    - if [[ "$TESTENV" == "code" ]]; then pytest; fi
     - if [[ "$TESTENV" == "docs" ]]; then ./scripts/travis/docs_runner.sh; fi
     - if [[ "$TESTENV" == "pylint" ]]; then ./scripts/travis/pylint_runner.sh; fi
