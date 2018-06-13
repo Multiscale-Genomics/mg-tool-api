@@ -35,6 +35,27 @@ def compss_open(job, *args, **kwargs):  # pylint: disable=unused-argument
     return job
 
 
+def compss_delete_file(job, *args, **kwargs):  # pylint: disable=unused-argument
+    """
+    Dummy delete file function required when deleting files in the COMPSs system
+    """
+    pass
+
+
+def compss_delete_object(job, *args, **kwargs):  # pylint: disable=unused-argument
+    """
+    Dummy delete file function required when deleting objects in the COMPSs system
+    """
+    pass
+
+
+def compss_delete(*args, **kwargs):  # pylint: disable=unused-argument
+    """
+    Dummy delete file function required when deleting from the COMPSs system
+    """
+    pass
+
+
 def barrier():
     """
     Dummy function to trigger the pipeline to wait till all jobs have completed
