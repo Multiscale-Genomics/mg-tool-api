@@ -99,7 +99,7 @@ class Metadata(object):  # pylint: disable=too-few-public-methods
         >>> child_metadata =
         >>> 	Metadata.get_child([metadata1, metadata2], 'child_file')
         """
-        if isinstance(parents, [list, tuple]) is False:
+        if isinstance(parents, (list, tuple)) is False:
             parents = (parents,)
         meta_data = copy.deepcopy(parents[0].meta_data)
 
