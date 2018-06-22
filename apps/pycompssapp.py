@@ -16,6 +16,8 @@
    limitations under the License.
 """
 
+from __future__ import print_function
+
 # -----------------------------------------------------------------------------
 # PyCOMPSs App
 # -----------------------------------------------------------------------------
@@ -34,7 +36,7 @@ except ImportError:
 from basic_modules.app import App
 
 
-class PyCOMPSsApp(App):
+class PyCOMPSsApp(App):  # pylint: disable=too-few-public-methods
     """
     PyCOMPSsApp: uses PyCOMPSs.
     """
@@ -51,7 +53,7 @@ class PyCOMPSsApp(App):
         # content from output_files. Then it is possible to perform any
         # post operation like storing the results somewhere.
         output_files, output_metadata = super(PyCOMPSsApp, self)._post_run(
-                                                            tool_instance,
-                                                            output_files,
-                                                            output_metadata)
+            tool_instance,
+            output_files,
+            output_metadata)
         return output_files, output_metadata

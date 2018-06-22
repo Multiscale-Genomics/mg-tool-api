@@ -16,6 +16,8 @@
    limitations under the License.
 """
 
+import sys
+
 """
 This is the logging facility of the mg-tool-api. It is meant to provide
 a unified way for Tools to log information that needs to be read by the
@@ -23,22 +25,21 @@ VRE (e.g. information about progress, errors, exceptions, etc.).
 
 It provides the following commonly used logging levels:
 
-DEBUG:		Detailed information, typically of interest only when
-		diagnosing problems.
-INFO:		Confirmation that Tool execution is working as expected.
-WARNING:	An indication that something unexpected happened, but that the
-		Tool can continue working successfully.
-ERROR:		A more serious problem has occurred, and the Tool will not be
-		able to perform some function.
-FATAL:		A serious error, indicating that the Tool may be unable to
-		continue running.
+DEBUG:   Detailed information, typically of interest only when
+         diagnosing problems.
+INFO:    Confirmation that Tool execution is working as expected.
+WARNING: An indication that something unexpected happened, but that the
+         Tool can continue working successfully.
+ERROR:   A more serious problem has occurred, and the Tool will not be
+         able to perform some function.
+FATAL:   A serious error, indicating that the Tool may be unable to
+         continue running.
 
 As well as the following non-standard levels:
 
-PROGRESS:	Provide the VRE with information about Tool execution progress
-"""
+PROGRESS: Provide the VRE with information about Tool execution progress.
+"""  # pylint: disable=pointless-string-statement
 
-import sys
 
 CRITICAL = 50
 FATAL = CRITICAL
@@ -52,7 +53,7 @@ DEBUG = 10
 STDOUT_LEVELS = [DEBUG, INFO, PROGRESS]
 STDERR_LEVELS = [WARNING, ERROR, FATAL, CRITICAL]
 
-_levelNames = {
+_levelNames = {  # pylint: disable=invalid-name
     FATAL: 'FATAL',
     ERROR: 'ERROR',
     WARNING: 'WARNING',
@@ -74,6 +75,7 @@ def __log(level, message, *args, **kwargs):
         _levelNames[level], message.format(*args, **kwargs)))
     return True
 
+
 def debug(message, *args, **kwargs):
     """
     Logs a message with level DEBUG.
@@ -85,12 +87,14 @@ def debug(message, *args, **kwargs):
     """
     return __log(DEBUG, message, *args, **kwargs)
 
+
 def info(message, *args, **kwargs):
     """
     Logs a message with level INFO. The arguments are interpreted as for
     debug().
     """
     return __log(INFO, message, *args, **kwargs)
+
 
 def warn(message, *args, **kwargs):
     """
@@ -99,7 +103,10 @@ def warn(message, *args, **kwargs):
     """
     return __log(WARNING, message, *args, **kwargs)
 
-warning = warn
+
+# Required for compatibility legacy code
+warning = warn  # pylint: disable=invalid-name
+
 
 def error(message, *args, **kwargs):
     """
@@ -108,43 +115,52 @@ def error(message, *args, **kwargs):
     """
     return __log(ERROR, message, *args, **kwargs)
 
+
 def fatal(message, *args, **kwargs):
     """
     Logs a message with level FATAL. The arguments are interpreted as for
     debug().
     """
     return __log(FATAL, message, *args, **kwargs)
-critical=fatal
 
-## Special loggers
+# Required for compatibility legacy code
+critical = fatal  # pylint: disable=invalid-name
+
+
+# Special loggers
 def progress(message, *args, **kwargs):
     """
     Provides information about Tool progress.
 
     Logs a message containing information about Tool progress, with level
-    PROGRESS.
+    ``PROGRESS``.
 
-    The arguments are interpreted as for debug() (see below for exceptions).
+    The arguments are interpreted as for ``debug()`` (see below for exceptions).
 
     This function provides two pre-baked log message formats, that can be
-    activated by specifying the following items in **kwargs:
+    activated by specifying the following items in ``**kwargs``:
 
+    Parameters
+    ----------
+    status : str
+        Status of the Tool
+        logs "MESSAGE - STATUS"
 
-        status : Status of the Tool
-            logs "MESSAGE - STATUS"
+    task_id : int
+        Current task; requires also the "total" item
+        logs "MESSAGE (TASK_ID/TOTAL)
 
-
-        task_id : Current task; requires also the "total" item
-            logs "MESSAGE (TASK_ID/TOTAL)
-
+    total : int
+        Total number of tasks, should be provided in conjunction with task_id
+        logs "MESSAGE (TASK_ID/TOTAL)
 
     Example
     -------
+
     .. code-block:: python
        :linenos:
 
        class TestTool(Tool):
-           # ...
            def run(self, input_files, input_metadata, output_files):
                logger.progress("TestTool starting", status="RUNNING")
                total_tasks = 3
@@ -160,12 +176,11 @@ def progress(message, *args, **kwargs):
 
                logger.progress("TestTool", status="DONE")
                return True
+
     """
     if "status" in kwargs:
         return __log(PROGRESS, "{} - {}", message, kwargs["status"])
     elif "task_id" in kwargs:
         return __log(PROGRESS, "{} ({}/{})", message, kwargs["task_id"], kwargs["total"])
-    else:
-        return __log(PROGRESS, message, *args, **kwargs)
-    return False
 
+    return __log(PROGRESS, message, *args, **kwargs)

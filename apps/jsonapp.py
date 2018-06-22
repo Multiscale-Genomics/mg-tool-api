@@ -19,12 +19,13 @@
 # -----------------------------------------------------------------------------
 # JSON-configured App
 # -----------------------------------------------------------------------------
-from apps.workflowapp import WorkflowApp
-from basic_modules.metadata import Metadata
 import json
 
+from apps.workflowapp import WorkflowApp
+from basic_modules.metadata import Metadata
 
-class JSONApp(WorkflowApp):
+
+class JSONApp(WorkflowApp):  # pylint: disable=too-few-public-methods
     """
     JSON-configured App.
 
@@ -34,7 +35,11 @@ class JSONApp(WorkflowApp):
 
     """
 
-    def launch(self, tool_class,
+    # The arguments deffer between this function and the supeclass in
+    # basic_modules.app to provide a common interface and so that the JSON
+    # configuration files can be provided to generate the parameters required
+    # by App.
+    def launch(self, tool_class,  # pylint: disable=too-many-locals,arguments-differ
                config_path, input_metadata_path, output_metadata_path):
         """
         Run a Tool with the specified inputs and configuration.
@@ -66,24 +71,26 @@ class JSONApp(WorkflowApp):
         >>> import App, Tool
         >>> app = JSONApp()
         >>> # expects to find valid config.json and input_metadata.json
-        >>> app.launch(Tool, "/path/to/config.json", "/path/to/input_metadata.json", "/path/to/results.json")
+        >>> app.launch(
+        ...     Tool, "/path/to/config.json",
+        ...     "/path/to/input_metadata.json", "/path/to/results.json")
         >>> # writes /path/to/results.json
         """
 
         print "0) Unpack information from JSON"
-        input_IDs, arguments, output_files = self._read_config(
+        input_ids, arguments, output_files = self._read_config(
             config_path)
 
-        input_metadata_IDs = self._read_metadata(
+        input_metadata_ids = self._read_metadata(
             input_metadata_path)
 
         # arrange by role
         input_metadata = {}
-        for role, ID in input_IDs.items():
-            if isinstance(ID, (list, tuple)):  # check allow_multiple?
-                input_metadata[role] = [input_metadata_IDs[el] for el in ID]
+        for role, input_id in input_ids.items():
+            if isinstance(input_id, (list, tuple)):  # check allow_multiple?
+                input_metadata[role] = [input_metadata_ids[el] for el in input_id]
             else:
-                input_metadata[role] = input_metadata_IDs[ID]
+                input_metadata[role] = input_metadata_ids[input_id]
 
         # get paths from IDs
         input_files = {}
@@ -104,14 +111,14 @@ class JSONApp(WorkflowApp):
             output_files, output_metadata,
             output_metadata_path)
 
-    def _read_config(self, json_path):
+    def _read_config(self, json_path):  # pylint: disable=no-self-use
         """
         Read config.json to obtain:
-        input_IDs: dict containing IDs of tool input files
+        input_ids: dict containing IDs of tool input files
         arguments: dict containing tool arguments
         output_files: dict containing absolute paths of tool outputs
 
-        Note that values of input_IDs may be either str or list,
+        Note that values of input_ids may be either str or list,
         according to whether "allow_multiple" is True for the role;
         in which case, the VRE will have accepted multiple input files
         for that role.
@@ -122,16 +129,16 @@ class JSONApp(WorkflowApp):
         For more information see the schema for config.json.
         """
         configuration = json.load(file(json_path))
-        input_IDs = {}
-        for input_ID in configuration["input_files"]:
-            role = input_ID["name"]
-            ID = input_ID["value"]
-            if role in input_IDs:
-                if not isinstance(input_IDs[role], list):
-                    input_IDs[role] = [input_IDs[role]]
-                input_IDs[role].append(ID)
+        input_ids = {}
+        for input_config_id in configuration["input_files"]:
+            role = input_config_id["name"]
+            input_id = input_config_id["value"]
+            if role in input_ids:
+                if not isinstance(input_ids[role], list):
+                    input_ids[role] = [input_ids[role]]
+                input_ids[role].append(input_id)
             else:
-                input_IDs[role] = ID
+                input_ids[role] = input_id
 
         output_files = {}
         for output_file in configuration["output_files"]:
@@ -141,11 +148,11 @@ class JSONApp(WorkflowApp):
         for argument in configuration["arguments"]:
             arguments[argument["name"]] = argument["value"]
 
-        return input_IDs, arguments, output_files
+        return input_ids, arguments, output_files
 
-    def _read_metadata(self, json_path):
+    def _read_metadata(self, json_path):  # pylint: disable=no-self-use
         """
-        Read input_metadata.json to obtain input_metadata_IDs, a dict
+        Read input_metadata.json to obtain input_metadata_ids, a dict
         containing metadata on each of the tool input files,
         arranged by their ID.
 
@@ -153,10 +160,9 @@ class JSONApp(WorkflowApp):
         """
         metadata = json.load(file(json_path))
         input_metadata = {}
-        input_source_ids = {}
         for input_file in metadata:
-            ID = input_file["_id"]
-            input_metadata[ID] = Metadata(
+            input_id = input_file["_id"]
+            input_metadata[input_id] = Metadata(
                 data_type=input_file["data_type"],
                 file_type=input_file["file_type"],
                 file_path=input_file["file_path"],
@@ -166,8 +172,8 @@ class JSONApp(WorkflowApp):
             )
         return input_metadata
 
-    def _write_results(self,
-                       input_files, input_metadata,
+    def _write_results(self,  # pylint: disable=no-self-use,too-many-arguments
+                       input_files, input_metadata,  # pylint: disable=unused-argument
                        output_files, output_metadata, json_path):
         """
         Write results.json using information from input_files and output_files:
@@ -190,6 +196,7 @@ class JSONApp(WorkflowApp):
         For more information see the schema for results.json.
         """
         results = []
+
         def _newresult(role, path, metadata):
             return {
                 "name": role,
@@ -204,9 +211,10 @@ class JSONApp(WorkflowApp):
         for role, path in output_files.items():
             metadata = output_metadata[role]
             if isinstance(path, (list, tuple)):  # check allow_multiple?
-                assert (isinstance(metadata, (list, tuple)) and \
-                        len(metadata) == len(path)) or \
-                        isinstance(metadata, Metadata), \
+                assert (
+                    isinstance(metadata, (list, tuple)) and
+                    len(metadata) == len(path)
+                ) or isinstance(metadata, Metadata), \
                         """Wrong number of metadata entries for role {role}:
 either 1 or {np}, not {nm}""".format(role=role, np=len(path), nm=len(metadata))
 

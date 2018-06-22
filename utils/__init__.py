@@ -16,6 +16,7 @@
    limitations under the License.
 """
 
+
 def remap(indict, *args, **kwargs):
     """
     Re-map keys of indict using information from arguments.
@@ -32,4 +33,3 @@ def remap(indict, *args, **kwargs):
         {new: indict[old] for new, old in kwargs.items()}
     )
     return outdict
-

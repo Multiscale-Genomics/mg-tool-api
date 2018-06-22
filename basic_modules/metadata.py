@@ -16,14 +16,15 @@
    limitations under the License.
 """
 
+from __future__ import print_function
 import copy
 
 
-class Metadata(object):
+class Metadata(object):  # pylint: disable=too-few-public-methods
     """
     Object containing all information pertaining to a specific data element.
     """
-    def __init__(self, data_type=None, file_type=None, file_path=None,
+    def __init__(self, data_type=None, file_type=None, file_path=None,  # pylint: disable=too-many-arguments
                  sources=None, meta_data=None, taxon_id=None):
         """
         Initialise the Metadata; for more information see the documentation for
@@ -98,10 +99,12 @@ class Metadata(object):
         >>> child_metadata =
         >>> 	Metadata.get_child([metadata1, metadata2], 'child_file')
         """
-        if type(parents) not in [list, tuple]:
+        if isinstance(parents, [list, tuple]) is False:
             parents = (parents,)
         meta_data = copy.deepcopy(parents[0].meta_data)
-        [meta_data.update(parent.meta_data) for parent in parents[1:]]
+
+        for parent in parents[1:]:
+            meta_data.update(parent.meta_data)
 
         return cls(parents[0].data_type,
                    parents[0].file_type,
