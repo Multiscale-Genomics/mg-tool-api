@@ -15,6 +15,6 @@
    limitations under the License.
 """
 
-from pycompssapp import PyCOMPSsApp
-from localapp import LocalApp
-from workflowapp import WorkflowApp
+from apps.pycompssapp import PyCOMPSsApp
+from apps.localapp import LocalApp
+from apps.workflowapp import WorkflowApp
