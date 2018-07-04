@@ -17,6 +17,7 @@
 """
 
 import sys
+import datetime
 
 """
 This is the logging facility of the mg-tool-api. It is meant to provide
@@ -66,13 +67,20 @@ _levelNames = {  # pylint: disable=invalid-name
 
 
 def __log(level, message, *args, **kwargs):
+    """
+    Function to print out the logging input
+    """
+    log_time = datetime.datetime.now()
+    log_ts = "{}-{}-{} {}:{}:{}".format(
+        log_time.year, log_time.month, log_time.day,
+        log_time.hour, log_time.minute, log_time.second)
     if level not in _levelNames:
         level = INFO
     outstream = sys.stdout
     if level in STDERR_LEVELS:
         outstream = sys.stderr
-    outstream.write("{}: {}\n".format(
-        _levelNames[level], message.format(*args, **kwargs)))
+    outstream.write("{} {}: {}\n".format(
+        log_ts, _levelNames[level], message.format(*args, **kwargs)))
     return True
 
 
