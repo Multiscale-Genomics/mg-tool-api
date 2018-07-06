@@ -20,10 +20,10 @@ from __future__ import print_function
 
 from mg_tool_api.basic_modules.metadata import Metadata
 from mg_tool_api.basic_modules.workflow import Workflow
-from tools_demos.simpleTool1 import SimpleTool1
-from tools_demos.simpleTool2 import SimpleTool2
 from mg_tool_api.utils import remap
 from mg_tool_api.utils import logger
+from tools_demos.simpleTool1 import SimpleTool1
+from tools_demos.simpleTool2 import SimpleTool2
 
 
 class SimpleWorkflow(Workflow):  # pylint: disable=too-few-public-methods
