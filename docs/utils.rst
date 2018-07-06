@@ -19,5 +19,5 @@ Utils
 App Initiating and handling
 ---------------------------
 
-.. automodule:: utils.logger
+.. automodule:: mg_tool_api.utils.logger
    :members:
