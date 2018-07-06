@@ -20,8 +20,8 @@ from __future__ import print_function
 
 from mg_tool_api.basic_modules.metadata import Metadata
 from mg_tool_api.basic_modules.workflow import Workflow
-from mg_tool_api.tools_demos.simpleTool1 import SimpleTool1
-from mg_tool_api.tools_demos.simpleTool2 import SimpleTool2
+from tools_demos.simpleTool1 import SimpleTool1
+from tools_demos.simpleTool2 import SimpleTool2
 from mg_tool_api.utils import remap
 from mg_tool_api.utils import logger
 
@@ -137,7 +137,7 @@ def main(input_files, input_metadata, output_files):
 
     # 1. Instantiate and launch the App
     logger.info("1. Instantiate and launch the App")
-    from apps.workflowapp import WorkflowApp
+    from mg_tool_api.apps.workflowapp import WorkflowApp
     app = WorkflowApp()
     result = app.launch(SimpleWorkflow, input_files, input_metadata,
                         output_files, {})
@@ -158,7 +158,7 @@ def main_json():
     """
     # 1. Instantiate and launch the App
     logger.info("1. Instantiate and launch the App")
-    from apps.jsonapp import JSONApp
+    from mg_tool_api.apps.jsonapp import JSONApp
     app = JSONApp()
     result = app.launch(SimpleWorkflow,
                         "tools_demos/config.json",
