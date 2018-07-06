@@ -21,8 +21,8 @@
 # -----------------------------------------------------------------------------
 import json
 
-from apps.workflowapp import WorkflowApp
-from basic_modules.metadata import Metadata
+from mg_tool_api.apps.workflowapp import WorkflowApp
+from mg_tool_api.basic_modules.metadata import Metadata
 
 
 class JSONApp(WorkflowApp):  # pylint: disable=too-few-public-methods

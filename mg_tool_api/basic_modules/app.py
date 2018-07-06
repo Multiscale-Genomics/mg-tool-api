@@ -17,7 +17,7 @@
 """
 
 from __future__ import print_function
-from basic_modules.metadata import Metadata  # pylint: disable=unused-import
+from mg_tool_api.basic_modules.metadata import Metadata  # pylint: disable=unused-import
 
 
 # -----------------------------------------------------------------------------

@@ -19,9 +19,9 @@
 # -----------------------------------------------------------------------------
 # Workflow App
 # -----------------------------------------------------------------------------
-from apps.localapp import LocalApp
-from apps.pycompssapp import PyCOMPSsApp
-from basic_modules.workflow import Workflow  # pylint: disable=unused-import
+from mg_tool_api.apps.localapp import LocalApp
+from mg_tool_api.apps.pycompssapp import PyCOMPSsApp
+from mg_tool_api.basic_modules.workflow import Workflow  # pylint: disable=unused-import
 
 
 class WorkflowApp(PyCOMPSsApp, LocalApp):  # pylint: disable=too-few-public-methods

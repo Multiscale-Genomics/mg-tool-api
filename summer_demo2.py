@@ -18,11 +18,11 @@
 
 from __future__ import print_function
 
-from basic_modules.metadata import Metadata
-from basic_modules.workflow import Workflow
+from mg_tool_api.basic_modules.metadata import Metadata
+from mg_tool_api.basic_modules.workflow import Workflow
 from tools_demos.simpleTool1 import SimpleTool1
 from tools_demos.simpleTool3 import SimpleTool3
-from utils import logger
+from mg_tool_api.utils import logger
 
 
 class SimpleWorkflow2(Workflow):  # pylint: disable=too-few-public-methods

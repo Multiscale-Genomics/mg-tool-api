@@ -31,9 +31,9 @@ except ImportError:
     print("[Warning] Cannot import \"pycompss\" API packages.")
     print("          Using mock decorators.")
 
-    from utils.dummy_pycompss import compss_wait_on
+    from mg_tool_api.utils.dummy_pycompss import compss_wait_on
 
-from basic_modules.app import App
+from mg_tool_api.basic_modules.app import App
 
 
 class PyCOMPSsApp(App):  # pylint: disable=too-few-public-methods

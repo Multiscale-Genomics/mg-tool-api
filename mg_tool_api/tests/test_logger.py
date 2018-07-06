@@ -17,7 +17,7 @@
 
 import pytest
 
-from utils import logger
+from mg_tool_api.utils import logger
 
 
 @pytest.mark.debug

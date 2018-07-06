@@ -29,11 +29,11 @@ except ImportError:
     print("[Warning] Cannot import \"pycompss\" API packages.")
     print("          Using mock decorators.")
 
-    from utils.dummy_pycompss import FILE_IN, FILE_OUT
-    from utils.dummy_pycompss import task
+    from mg_tool_api.utils.dummy_pycompss import FILE_IN, FILE_OUT
+    from mg_tool_api.utils.dummy_pycompss import task
 
-from basic_modules.metadata import Metadata
-from utils import logger  # pylint: disable=ungrouped-imports
+from mg_tool_api.basic_modules.metadata import Metadata
+from mg_tool_api.utils import logger  # pylint: disable=ungrouped-imports
 
 
 # -----------------------------------------------------------------------------
