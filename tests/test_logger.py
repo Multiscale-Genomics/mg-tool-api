@@ -15,6 +15,7 @@
    limitations under the License.
 """
 
+import re
 import pytest
 
 from utils import logger
@@ -27,7 +28,7 @@ def test_debug(capsys):
     """
     logger.debug("test")
     captured = capsys.readouterr()
-    assert captured[0] == "DEBUG: test\n"
+    assert re.search("DEBUG: test", captured[0])
 
 
 @pytest.mark.info
@@ -37,7 +38,7 @@ def test_info(capsys):
     """
     logger.info("test")
     captured = capsys.readouterr()
-    assert captured[0] == "INFO: test\n"
+    assert re.search("INFO: test", captured[0])
 
 
 @pytest.mark.warn
@@ -47,7 +48,7 @@ def test_warn(capsys):
     """
     logger.warn("test")
     captured = capsys.readouterr()
-    assert captured[1] == "WARNING: test\n"
+    assert re.search("WARNING: test", captured[1])
 
 
 @pytest.mark.error
@@ -57,7 +58,7 @@ def test_error(capsys):
     """
     logger.error("test")
     captured = capsys.readouterr()
-    assert captured[1] == "ERROR: test\n"
+    assert re.search("ERROR: test", captured[1])
 
 
 @pytest.mark.fatal
@@ -67,7 +68,7 @@ def test_fatal(capsys):
     """
     logger.fatal("test")
     captured = capsys.readouterr()
-    assert captured[1] == "FATAL: test\n"
+    assert re.search("FATAL: test", captured[1])
 
 
 @pytest.mark.progress
@@ -77,7 +78,7 @@ def test_progress_00(capsys):
     """
     logger.progress("test")
     captured = capsys.readouterr()
-    assert captured[0] == "PROGRESS: test\n"
+    assert re.search("PROGRESS: test", captured[0])
 
 
 @pytest.mark.progress
@@ -87,11 +88,11 @@ def test_progress_01(capsys):
     """
     logger.progress("test", status="RUNNING")
     captured = capsys.readouterr()
-    assert captured[0] == "PROGRESS: test - RUNNING\n"
+    assert re.search("PROGRESS: test - RUNNING", captured[0])
 
     logger.progress("test", status="DONE")
     captured = capsys.readouterr()
-    assert captured[0] == "PROGRESS: test - DONE\n"
+    assert re.search("PROGRESS: test - DONE", captured[0])
 
 
 @pytest.mark.progress
@@ -101,4 +102,4 @@ def test_progress_02(capsys):
     """
     logger.progress("test", task_id=2, total=5)
     captured = capsys.readouterr()
-    assert captured[0] == "PROGRESS: test (2/5)\n"
+    assert re.search("PROGRESS: test \(2\/5\)", captured[0])
