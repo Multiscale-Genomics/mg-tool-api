@@ -23,6 +23,7 @@ import json
 
 from apps.workflowapp import WorkflowApp
 from basic_modules.metadata import Metadata
+from utils import logger
 
 
 class JSONApp(WorkflowApp):  # pylint: disable=too-few-public-methods
@@ -77,7 +78,7 @@ class JSONApp(WorkflowApp):  # pylint: disable=too-few-public-methods
         >>> # writes /path/to/results.json
         """
 
-        print "0) Unpack information from JSON"
+        logger.info("0) Unpack information from JSON")
         input_ids, arguments, output_files = self._read_config(
             config_path)
 
@@ -105,7 +106,7 @@ class JSONApp(WorkflowApp):  # pylint: disable=too-few-public-methods
             tool_class, input_files, input_metadata,
             output_files, arguments)
 
-        print "4) Pack information to JSON"
+        logger.info("4) Pack information to JSON")
         return self._write_results(
             input_files, input_metadata,
             output_files, output_metadata,
