@@ -60,7 +60,7 @@ def barrier():
     """
     Dummy function to trigger the pipeline to wait till all jobs have completed
     """
-    return
+    pass
 
 
 def local(job):
