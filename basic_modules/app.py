@@ -18,6 +18,7 @@
 
 from __future__ import print_function
 from basic_modules.metadata import Metadata  # pylint: disable=unused-import
+from utils import logger
 
 
 # -----------------------------------------------------------------------------
@@ -98,10 +99,10 @@ class App(object):  # pylint: disable=too-few-public-methods
         >>> app.launch(Tool, {"input": <input_file>}, {})
         """
 
-        print("1) Instantiate and configure Tool")
+        logger.info("1) Instantiate and configure Tool")
         tool_instance = self._instantiate_tool(tool_class, configuration)
 
-        print("2) Run Tool")
+        logger.info("2) Run Tool")
         input_files, input_metadata = self._pre_run(tool_instance,
                                                     input_files,
                                                     input_metadata)
@@ -114,7 +115,7 @@ class App(object):  # pylint: disable=too-few-public-methods
                                                        output_files,
                                                        output_metadata)
 
-        print("Output_files: ", output_files)
+        logger.info("Output_files: ", output_files)
         return output_files, output_metadata
 
     def _instantiate_tool(self, tool_class, configuration):  # pylint: disable=no-self-use
