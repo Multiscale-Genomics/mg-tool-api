@@ -186,9 +186,11 @@ def progress(message, *args, **kwargs):
                return True
 
     """
+
     if "status" in kwargs:
         return __log(PROGRESS, "{} - {}", message, kwargs["status"])
-    elif "task_id" in kwargs:
+
+    if "task_id" in kwargs:
         return __log(PROGRESS, "{} ({}/{})", message, kwargs["task_id"], kwargs["total"])
 
     return __log(PROGRESS, message, *args, **kwargs)
