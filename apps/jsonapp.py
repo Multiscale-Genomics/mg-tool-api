@@ -129,7 +129,7 @@ class JSONApp(WorkflowApp):  # pylint: disable=too-few-public-methods
 
         For more information see the schema for config.json.
         """
-        configuration = json.load(file(json_path))
+        configuration = json.load(open(json_path))
         input_ids = {}
         for input_config_id in configuration["input_files"]:
             role = input_config_id["name"]
@@ -159,7 +159,7 @@ class JSONApp(WorkflowApp):  # pylint: disable=too-few-public-methods
 
         For more information see the schema for input_metadata.json.
         """
-        metadata = json.load(file(json_path))
+        metadata = json.load(open(json_path))
         input_metadata = {}
         for input_file in metadata:
             input_id = input_file["_id"]
@@ -228,6 +228,6 @@ either 1 or {np}, not {nm}""".format(role=role, np=len(path), nm=len(metadata))
                 results.append(
                     _newresult(role, path, metadata))
         json.dump(
-            {"output_files": results}, file(json_path, 'w'),
+            {"output_files": results}, open(json_path, 'w'),
             indent=4, separators=(',', ': '))
         return True
